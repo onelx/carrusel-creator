@@ -7,7 +7,7 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end()
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
-  const { carouselId, index, imageB64 } = req.body
+  const { carouselId, index, imageB64, isPng } = req.body
   if (!carouselId || index === undefined || !imageB64) {
     return res.status(400).json({ error: 'Faltan campos: carouselId, index, imageB64' })
   }
@@ -16,11 +16,13 @@ module.exports = async function handler(req, res) {
 
   try {
     const buf = Buffer.from(imageB64, 'base64')
-    const path = `${carouselId}/slide-${String(index + 1).padStart(2, '0')}.jpg`
+    const ext = isPng ? 'png' : 'jpg'
+    const contentType = isPng ? 'image/png' : 'image/jpeg'
+    const path = `${carouselId}/slide-${String(index + 1).padStart(2, '0')}.${ext}`
 
     const { error: upError } = await supabase.storage
       .from('carousel-slides')
-      .upload(path, buf, { contentType: 'image/jpeg', upsert: true })
+      .upload(path, buf, { contentType, upsert: true })
 
     if (upError) throw new Error(upError.message)
 

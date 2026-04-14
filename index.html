@@ -1922,16 +1922,30 @@ async function saveCarouselToSupabase(mode, statusEl) {
     const carouselId = saveData.id
     if (mode === 'ia') iaCarouselId = carouselId
 
-    // 2. Renderizar cada slide y subirlo al servidor (uno por uno, ~80KB cada uno)
+    // 2. Subir cada slide (directo para IA, html2canvas para Fotos)
     const slideUrls = []
     for (let i = 0; i < c.slides.length; i++) {
       setStatus('saving', `⏳ Subiendo slide ${i + 1}/${c.slides.length}...`)
-      const imageB64 = await renderSlideToJpeg(i, mode)
+
+      let imageB64, isPng
+      if (mode === 'ia') {
+        // Usar la imagen PNG de Gemini directamente (sin html2canvas)
+        const dataUrl = iaSlideImages[i]
+        imageB64 = dataUrl ? dataUrl.split(',')[1] : null
+        isPng = true
+      } else {
+        // Modo fotos: usar la imagen subida por el usuario
+        const img = uploadedImages[c.slides[i]?.image_index]
+        imageB64 = img ? img.b64 : null
+        isPng = false
+      }
+
+      if (!imageB64) continue
 
       const upRes = await fetch(`${API}/api/upload-slide`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ carouselId, index: i, imageB64 })
+        body: JSON.stringify({ carouselId, index: i, imageB64, isPng })
       })
       const upData = await upRes.json()
       if (!upData.ok) throw new Error(upData.error || 'Error subiendo slide')
