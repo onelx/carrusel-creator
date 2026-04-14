@@ -1901,10 +1901,7 @@ async function saveCarouselToSupabase(mode, statusEl) {
   setStatus('saving', '⏳ Guardando...')
 
   try {
-    // 1. Renderizar thumbnail (solo slide 0, pequeño)
-    const thumbnailB64 = await renderSlideToJpeg(0, mode)
-
-    // 2. Crear registro en DB + obtener URLs firmadas para subir slides
+    // 1. Crear registro en DB (solo metadata, liviano)
     const saveRes = await fetch(`${API}/api/save-carousel`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1914,40 +1911,42 @@ async function saveCarouselToSupabase(mode, statusEl) {
         renderMode: mode === 'ia' ? iaRenderMode : null,
         theme: c.theme,
         slides: c.slides,
-        thumbnailB64,
         agent1Output: mode === 'ia' ? iaAgent1Output : null,
         agent2Output: mode === 'ia' ? iaAgent2Output : null
       })
     })
     if (!saveRes.ok) throw new Error(`HTTP ${saveRes.status}`)
     const saveData = await saveRes.json()
-    if (!saveData.ok) throw new Error(typeof saveData.error === 'string' ? saveData.error : JSON.stringify(saveData.error))
+    if (!saveData.ok) throw new Error(saveData.error || 'Error al crear registro')
 
-    const { id: carouselId, signedUrls } = saveData
+    const carouselId = saveData.id
     if (mode === 'ia') iaCarouselId = carouselId
 
-    // 3. Renderizar y subir cada slide directamente a Supabase Storage
+    // 2. Renderizar cada slide y subirlo al servidor (uno por uno, ~80KB cada uno)
     const slideUrls = []
-    for (const { index, signedUrl } of signedUrls) {
-      const jpegB64 = await renderSlideToJpeg(index, mode)
-      const bytes = Uint8Array.from(atob(jpegB64), ch => ch.charCodeAt(0))
+    for (let i = 0; i < c.slides.length; i++) {
+      setStatus('saving', `⏳ Subiendo slide ${i + 1}/${c.slides.length}...`)
+      const imageB64 = await renderSlideToJpeg(i, mode)
 
-      await fetch(signedUrl, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'image/jpeg' },
-        body: bytes
+      const upRes = await fetch(`${API}/api/upload-slide`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ carouselId, index: i, imageB64 })
       })
-
-      // URL pública del slide (reemplazar el path firmado por la URL pública)
-      const publicUrl = `${saveData.signedUrls[index]?.signedUrl?.split('?')[0]?.replace('/object/upload/', '/object/public/')}`
-      slideUrls.push(publicUrl)
+      const upData = await upRes.json()
+      if (!upData.ok) throw new Error(upData.error || 'Error subiendo slide')
+      slideUrls.push(upData.url)
     }
 
-    // 4. Confirmar URLs en la DB
+    // 3. Guardar las URLs y el thumbnail en la DB
     await fetch(`${API}/api/confirm-carousel`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: carouselId, slideUrls, thumbnailUrl: saveData.thumbnailUrl })
+      body: JSON.stringify({
+        id: carouselId,
+        slideUrls,
+        thumbnailUrl: slideUrls[0]
+      })
     })
 
     setStatus('saved', '✓ Guardado en historial')

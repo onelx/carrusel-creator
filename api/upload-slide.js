@@ -1,0 +1,34 @@
+const { createClient } = require('@supabase/supabase-js')
+
+module.exports = async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  if (req.method === 'OPTIONS') return res.status(200).end()
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
+
+  const { carouselId, index, imageB64 } = req.body
+  if (!carouselId || index === undefined || !imageB64) {
+    return res.status(400).json({ error: 'Faltan campos: carouselId, index, imageB64' })
+  }
+
+  const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY)
+
+  try {
+    const buf = Buffer.from(imageB64, 'base64')
+    const path = `${carouselId}/slide-${String(index + 1).padStart(2, '0')}.jpg`
+
+    const { error: upError } = await supabase.storage
+      .from('carousel-slides')
+      .upload(path, buf, { contentType: 'image/jpeg', upsert: true })
+
+    if (upError) throw new Error(upError.message)
+
+    const { data: urlData } = supabase.storage.from('carousel-slides').getPublicUrl(path)
+
+    res.json({ ok: true, index, url: urlData.publicUrl })
+  } catch (err) {
+    console.error('upload-slide error:', err)
+    res.status(500).json({ error: err.message || 'Error subiendo el slide' })
+  }
+}
