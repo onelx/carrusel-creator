@@ -1,0 +1,8 @@
+{
+  "name": "carrusel-creator",
+  "version": "1.0.0",
+  "main": "serve.js",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0"
+  }
+}

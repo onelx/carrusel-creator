@@ -1,5 +1,5 @@
 const Anthropic = require('@anthropic-ai/sdk')
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const client = new Anthropic.default({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 const SYSTEM_PROMPT = `Eres un director creativo especializado en carruseles de Instagram.
 
