@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/*.js", "use": "@vercel/node" },
+    { "src": "*.html", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/generate-carousel", "dest": "/api/generate-carousel.js" },
+    { "src": "/", "dest": "/index.html" }
+  ]
+}
