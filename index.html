@@ -399,20 +399,112 @@
     /* Slide download */
     .slide-download { display: flex; gap: 8px; align-items: center; }
 
-    /* ══ PLACEHOLDER VIEWS ══ */
-    .placeholder-view {
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; flex: 1; gap: 16px;
-      color: var(--muted); text-align: center;
+    /* ══ STYLE TOGGLE (Fondo / Editorial) ══ */
+    .style-toggle {
+      display: flex; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
     }
-    .placeholder-view .ph-icon { font-size: 3rem; opacity: 0.3; }
-    .placeholder-view h3 { font-size: 1rem; font-weight: 700; color: var(--muted2); }
-    .placeholder-view p { font-size: 0.75rem; max-width: 280px; line-height: 1.6; }
-    .placeholder-view .ph-badge {
-      background: rgba(245,197,24,0.1); border: 1px solid rgba(245,197,24,0.2);
-      color: var(--accent); font-size: 0.6rem; font-weight: 700;
-      letter-spacing: 0.1em; padding: 4px 12px; border-radius: 20px; text-transform: uppercase;
+    .style-opt {
+      flex: 1; padding: 9px 14px; border: none; background: none;
+      color: var(--muted2); font-family: inherit; font-size: 0.72rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
     }
+    .style-opt.active { background: var(--accent); color: #000; }
+    .style-opt:not(.active):hover { color: var(--text); background: rgba(255,255,255,0.04); }
+
+    /* ══ IA STYLE IMAGE UPLOAD ══ */
+    .ia-style-dz {
+      border: 2px dashed var(--border); border-radius: 10px; padding: 18px 16px;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+      position: relative; background: var(--surface2);
+    }
+    .ia-style-dz:hover, .ia-style-dz.drag-over { border-color: var(--accent); background: rgba(245,197,24,0.04); }
+    .ia-style-dz input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .ia-style-dz p { font-size: 0.65rem; color: var(--muted2); margin-top: 4px; }
+    .ia-style-previews {
+      display: none; gap: 8px; margin-top: 10px;
+    }
+    .ia-style-previews.show { display: flex; }
+    .ia-style-thumb {
+      position: relative; width: 72px; height: 90px; border-radius: 7px;
+      overflow: hidden; border: 2px solid var(--border); flex-shrink: 0;
+    }
+    .ia-style-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .ia-style-thumb button {
+      position: absolute; top: 2px; right: 2px;
+      background: rgba(239,68,68,0.9); color: #fff;
+      border: none; border-radius: 50%; width: 16px; height: 16px;
+      font-size: 0.55rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ══ IA LOADING ══ */
+    .ia-step-text { transition: all 0.2s; }
+
+    /* ══ EDITORIAL SLIDE LAYOUT ══ */
+    .ig-slide-editorial {
+      width: 1080px; height: 1350px;
+      display: flex; position: relative; overflow: hidden;
+    }
+    .edit-img {
+      width: 540px; height: 100%; flex-shrink: 0;
+      background-size: cover; background-position: center;
+    }
+    .edit-panel {
+      width: 540px; height: 100%; flex-shrink: 0;
+      display: flex; align-items: center; padding: 80px 64px;
+    }
+    .edit-inner { display: flex; flex-direction: column; width: 100%; }
+    .edit-inner .badge {
+      display: inline-block; font-size: 18px; font-weight: 800;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--slide-accent, #f5c518); margin-bottom: 28px;
+      border-bottom: 3px solid var(--slide-accent, #f5c518); padding-bottom: 6px;
+    }
+    .edit-inner .titulo {
+      font-weight: 900; line-height: 1.05; color: var(--slide-text, #fff);
+      margin-bottom: 24px;
+    }
+    .edit-inner .titulo.sz-xl { font-size: 80px; }
+    .edit-inner .titulo.sz-lg { font-size: 62px; }
+    .edit-inner .titulo.sz-md { font-size: 48px; }
+    .edit-inner .subtitulo {
+      font-size: 28px; font-weight: 400; line-height: 1.5;
+      color: var(--slide-text, #fff); opacity: 0.85; margin-bottom: 16px;
+    }
+    .edit-inner .cuerpo {
+      font-size: 22px; font-weight: 300; line-height: 1.7;
+      color: var(--slide-text, #fff); opacity: 0.7;
+    }
+    .edit-inner .cta-text {
+      display: inline-block; font-size: 22px; font-weight: 700;
+      color: var(--slide-accent, #f5c518); margin-top: 28px;
+      border: 3px solid var(--slide-accent, #f5c518);
+      padding: 14px 40px; border-radius: 60px; align-self: flex-start;
+    }
+    .edit-num {
+      position: absolute; bottom: 40px; right: 48px;
+      font-size: 18px; font-weight: 700;
+      color: var(--slide-text-c, #fff); opacity: 0.3;
+    }
+    /* Editorial font styles */
+    .edit-font-elegant .titulo { font-family: 'Playfair Display', serif; }
+    .edit-font-elegant .subtitulo { font-style: italic; font-weight: 300; }
+    .edit-font-modern .titulo { font-family: 'Inter', sans-serif; font-weight: 900; }
+    .edit-font-bold .titulo { font-family: 'Oswald', sans-serif; font-weight: 700; text-transform: uppercase; }
+
+    /* ══ IA RESULT — style switch in result header ══ */
+    .render-mode-switch {
+      display: flex; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 7px; overflow: hidden;
+    }
+    .rm-opt {
+      padding: 6px 12px; border: none; background: none;
+      color: var(--muted2); font-family: inherit; font-size: 0.68rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .rm-opt.active { background: var(--accent); color: #000; }
 
     /* Scrollbar */
     ::-webkit-scrollbar { width: 4px; }
@@ -442,7 +534,6 @@
       <button class="nav-item" id="nav-ia" onclick="switchView('ia')">
         <span class="nav-icon">✨</span>
         <span class="nav-label">Con IA</span>
-        <span class="nav-badge">Próximo</span>
       </button>
 
     </div>
@@ -596,15 +687,132 @@
 
     </div><!-- /view-fotos -->
 
-    <!-- ══ VIEW: CON IA (próximo) ══ -->
+    <!-- ══ VIEW: CON IA ══ -->
     <div class="view" id="view-ia">
-      <div class="placeholder-view">
-        <div class="ph-icon">✨</div>
-        <div class="ph-badge">Próximamente</div>
-        <h3>Carrusel con imágenes generadas</h3>
-        <p>Subís un texto y 1-2 fotos de referencia visual. Gemini genera una imagen nueva por slide, alineada al contenido de cada idea.</p>
+
+      <!-- Phase: Upload -->
+      <div id="ia-upload">
+        <div style="max-width:660px;display:flex;flex-direction:column;gap:20px">
+
+          <!-- Brief -->
+          <div class="upload-card">
+            <div class="card-header">
+              <span class="card-icon">📝</span>
+              <div>
+                <div class="card-title">Brief / Idea</div>
+                <div class="card-desc">Claude extrae las ideas clave y escribe el copy de cada slide</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <label class="field-label">Tu texto, reflexión o artículo:</label>
+              <textarea class="field-textarea" id="ia-brief" rows="8"
+                placeholder="Escribí tu idea, brief o reflexión aquí. Claude la va a convertir en un carrusel de 4-6 slides con imágenes generadas por Gemini..."
+                oninput="iaUpdateBtn()"></textarea>
+            </div>
+          </div>
+
+          <!-- Style images + render toggle -->
+          <div class="upload-card">
+            <div class="card-header">
+              <span class="card-icon">🎨</span>
+              <div>
+                <div class="card-title">Estilo visual</div>
+                <div class="card-desc">1-2 fotos de referencia para que Gemini adopte el mismo mood</div>
+              </div>
+            </div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:16px">
+
+              <div class="ia-style-dz" id="ia-style-dz">
+                <input type="file" id="ia-style-input" accept="image/jpeg,image/png,image/webp" multiple />
+                <div style="font-size:1.4rem">🖼</div>
+                <div style="font-size:0.78rem;font-weight:600;margin-top:6px">Subí 1-2 fotos de referencia</div>
+                <p>Opcional · JPG, PNG, WEBP</p>
+              </div>
+
+              <div class="ia-style-previews" id="ia-style-previews"></div>
+
+              <div>
+                <label class="field-label" style="margin-bottom:8px">Estilo de slide:</label>
+                <div class="style-toggle">
+                  <button class="style-opt active" id="ia-opt-fondo" onclick="setIAStyle('fondo')">
+                    🖼 Fondo
+                  </button>
+                  <button class="style-opt" id="ia-opt-editorial" onclick="setIAStyle('editorial')">
+                    📰 Editorial
+                  </button>
+                </div>
+                <div style="font-size:0.6rem;color:var(--muted2);margin-top:6px;line-height:1.5" id="ia-style-desc">
+                  Imagen a full bleed con texto superpuesto
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="err-box" id="ia-error"></div>
+
+          <button class="btn-generate" id="ia-btn-gen" onclick="generateIA()" disabled>
+            ✨ Generar Carrusel con IA
+          </button>
+
+        </div>
       </div>
-    </div>
+
+      <!-- Phase: Loading -->
+      <div id="ia-loading" style="display:none">
+        <div class="loading-center">
+          <div class="loading-ring"></div>
+          <div style="text-align:center">
+            <div class="loading-title">Creando tu carrusel...</div>
+            <div style="font-size:0.7rem;color:var(--muted2);margin-top:4px">Claude + Gemini trabajando en paralelo</div>
+          </div>
+          <div class="loading-steps">
+            <div class="loading-step" id="ia-ls1"><div class="step-dot"></div> <span class="ia-step-text">Claude leyendo el brief</span></div>
+            <div class="loading-step" id="ia-ls2"><div class="step-dot"></div> <span class="ia-step-text">Diseñando los slides</span></div>
+            <div class="loading-step" id="ia-ls3"><div class="step-dot"></div> <span class="ia-step-text" id="ia-img-progress">Generando imágenes con Gemini</span></div>
+            <div class="loading-step" id="ia-ls4"><div class="step-dot"></div> <span class="ia-step-text">Construyendo el carrusel</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase: Result -->
+      <div id="ia-result" style="display:none">
+
+        <div class="result-header">
+          <div>
+            <div class="result-title" id="ia-result-title">Carrusel generado</div>
+            <div class="result-subtitle" id="ia-result-subtitle">0 slides · 1080×1350px · Gemini</div>
+          </div>
+          <div class="result-actions">
+            <div class="render-mode-switch">
+              <button class="rm-opt active" id="rm-fondo"     onclick="switchRenderMode('fondo')">🖼 Fondo</button>
+              <button class="rm-opt"        id="rm-editorial" onclick="switchRenderMode('editorial')">📰 Editorial</button>
+            </div>
+            <button class="btn-sm btn-outline" onclick="restartIA()">↩ Nuevo</button>
+            <button class="btn-sm btn-filled"  onclick="downloadAllIA()" id="ia-btn-dl-all">⬇ Descargar todos</button>
+          </div>
+        </div>
+
+        <div class="carousel-stage">
+          <div class="slide-wrapper">
+            <div class="slide-inner" id="ia-slide-inner"></div>
+          </div>
+          <div class="carousel-nav">
+            <button class="nav-btn" id="ia-btn-prev" onclick="iaNavigate(-1)">←</button>
+            <div class="dots" id="ia-dots"></div>
+            <div class="nav-info" id="ia-nav-info">1 / 1</div>
+            <button class="nav-btn" id="ia-btn-next" onclick="iaNavigate(1)">→</button>
+          </div>
+          <div class="thumbnails" id="ia-thumbnails"></div>
+          <div class="slide-download">
+            <button class="btn-sm btn-outline" onclick="downloadCurrentIA()" id="ia-btn-dl-slide">⬇ Slide actual</button>
+            <span style="font-size:0.62rem;color:var(--muted2)" id="ia-dl-status"></span>
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- /view-ia -->
 
   </div><!-- /main -->
 
@@ -899,6 +1107,320 @@ async function downloadSlide(index) {
   a.download = `slide-${String(index+1).padStart(2,'0')}.png`
   a.href = canvas.toDataURL('image/png'); a.click()
 }
+
+// ══════════════════════════════════════════════════════════════
+// ── CON IA — State ────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+let iaCarouselData   = null
+let iaSlideImages    = []     // array of data:image/... URLs (one per slide)
+let iaStyleImages    = []     // base64 reference style images
+let iaCurrentSlide   = 0
+let iaRenderMode     = 'fondo'  // 'fondo' | 'editorial'
+
+// ── Style image upload ────────────────────────────────────────
+const iaStyleDz    = document.getElementById('ia-style-dz')
+const iaStyleInput = document.getElementById('ia-style-input')
+
+iaStyleDz.addEventListener('dragover', e => { e.preventDefault(); iaStyleDz.classList.add('drag-over') })
+iaStyleDz.addEventListener('dragleave', () => iaStyleDz.classList.remove('drag-over'))
+iaStyleDz.addEventListener('drop', e => {
+  e.preventDefault(); iaStyleDz.classList.remove('drag-over')
+  iaLoadStyleFiles(Array.from(e.dataTransfer.files))
+})
+iaStyleInput.addEventListener('change', e => iaLoadStyleFiles(Array.from(e.target.files)))
+
+async function iaLoadStyleFiles(files) {
+  for (const file of files.filter(f => f.type.startsWith('image/'))) {
+    if (iaStyleImages.length >= 2) break
+    const { dataUrl, b64 } = await compressImage(file)
+    iaStyleImages.push({ dataUrl, b64 })
+  }
+  iaRenderStylePreviews()
+}
+
+function iaRenderStylePreviews() {
+  const el = document.getElementById('ia-style-previews')
+  if (!iaStyleImages.length) { el.classList.remove('show'); return }
+  el.classList.add('show')
+  el.innerHTML = iaStyleImages.map((img, i) => `
+    <div class="ia-style-thumb">
+      <img src="${img.dataUrl}" />
+      <button onclick="iaRemoveStyle(${i})">✕</button>
+    </div>`).join('')
+  // Hide dropzone if max reached
+  iaStyleDz.style.display = iaStyleImages.length >= 2 ? 'none' : 'block'
+}
+
+function iaRemoveStyle(i) {
+  iaStyleImages.splice(i, 1)
+  iaStyleDz.style.display = 'block'
+  iaRenderStylePreviews()
+}
+
+// ── Style toggle (Fondo / Editorial) ─────────────────────────
+const iaStyleDescriptions = {
+  fondo:     'Imagen a full bleed con texto superpuesto',
+  editorial: 'Imagen mitad izquierda, texto en panel derecho'
+}
+function setIAStyle(mode) {
+  iaRenderMode = mode
+  document.getElementById('ia-opt-fondo').classList.toggle('active', mode === 'fondo')
+  document.getElementById('ia-opt-editorial').classList.toggle('active', mode === 'editorial')
+  document.getElementById('ia-style-desc').textContent = iaStyleDescriptions[mode]
+}
+
+// ── Generate button state ─────────────────────────────────────
+function iaUpdateBtn() {
+  const brief = document.getElementById('ia-brief').value.trim()
+  document.getElementById('ia-btn-gen').disabled = !brief
+}
+
+// ── Phase switching ───────────────────────────────────────────
+function showIAPhase(phase) {
+  document.getElementById('ia-upload').style.display  = phase === 'upload'  ? 'block' : 'none'
+  document.getElementById('ia-loading').style.display = phase === 'loading' ? 'block' : 'none'
+  document.getElementById('ia-result').style.display  = phase === 'result'  ? 'block' : 'none'
+}
+
+function restartIA() {
+  iaCarouselData = null; iaSlideImages = []; iaCurrentSlide = 0
+  showIAPhase('upload')
+}
+
+// ── Loading step animation ────────────────────────────────────
+function iaSetStep(step) {
+  // step 1-4: set done for all before, active for current
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById(`ia-ls${i}`)
+    el.className = 'loading-step' + (i < step ? ' done' : i === step ? ' active' : '')
+  }
+}
+
+// ── Main generate function ────────────────────────────────────
+async function generateIA() {
+  const brief = document.getElementById('ia-brief').value.trim()
+  if (!brief) return
+
+  document.getElementById('ia-error').style.display = 'none'
+  showIAPhase('loading')
+  iaSetStep(1)
+
+  try {
+    // ── Step 1 & 2: Claude generates carousel JSON with image prompts ──
+    const claudeRes = await fetch(`${API}/api/generate-carousel-ia`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        textContent: brief,
+        styleImages: iaStyleImages.map(i => i.b64)
+      })
+    })
+    if (!claudeRes.ok) {
+      let msg = `Error ${claudeRes.status}`
+      try { msg = (await claudeRes.json()).error || msg } catch {}
+      throw new Error(msg)
+    }
+    const claudeData = await claudeRes.json()
+    iaCarouselData = claudeData.carousel
+    iaSetStep(2)
+
+    // Small delay so user can see step 2 progress
+    await new Promise(r => setTimeout(r, 400))
+    iaSetStep(3)
+
+    // ── Step 3: Gemini generates all images in parallel ──
+    const total = iaCarouselData.slides.length
+    let completedImages = 0
+
+    const imagePromises = iaCarouselData.slides.map(slide =>
+      fetch(`${API}/api/generate-slide-image`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: slide.image_prompt })
+      })
+      .then(r => r.json())
+      .then(data => {
+        completedImages++
+        document.getElementById('ia-img-progress').textContent =
+          `Generando imágenes ${completedImages}/${total}`
+        if (!data.image) throw new Error('Sin imagen')
+        return `data:${data.mimeType || 'image/png'};base64,${data.image}`
+      })
+    )
+
+    iaSlideImages = await Promise.all(imagePromises)
+
+    // ── Step 4: Render ──
+    iaSetStep(4)
+    await new Promise(r => setTimeout(r, 300))
+
+    iaCurrentSlide = 0
+    iaRenderResult()
+    showIAPhase('result')
+
+  } catch (err) {
+    console.error(err)
+    showIAPhase('upload')
+    const el = document.getElementById('ia-error')
+    el.textContent = 'Error: ' + err.message; el.style.display = 'block'
+  }
+}
+
+// ── Render result ─────────────────────────────────────────────
+function iaRenderResult() {
+  const c = iaCarouselData
+  document.getElementById('ia-result-title').textContent = c.tema || 'Carrusel con IA'
+  document.getElementById('ia-result-subtitle').textContent =
+    `${c.slides.length} slides · 1080×1350px · Gemini`
+
+  document.getElementById('ia-dots').innerHTML = c.slides.map((_,i) =>
+    `<div class="dot ${i===0?'active':''}" onclick="iaGoTo(${i})"></div>`).join('')
+
+  document.getElementById('ia-thumbnails').innerHTML = c.slides.map((slide, i) => {
+    const imgUrl = iaSlideImages[i]
+    return `<div class="thumb-nav ${i===0?'active':''}" onclick="iaGoTo(${i})">
+      ${imgUrl ? `<img src="${imgUrl}" />` : '<div style="background:var(--surface2);width:100%;height:100%"></div>'}
+      <div class="tn-num">${i+1}</div>
+    </div>`
+  }).join('')
+
+  // Sync render mode buttons
+  document.getElementById('rm-fondo').classList.toggle('active', iaRenderMode === 'fondo')
+  document.getElementById('rm-editorial').classList.toggle('active', iaRenderMode === 'editorial')
+
+  iaGoTo(0)
+}
+
+function iaGoTo(i) {
+  iaCurrentSlide = i
+  const c = iaCarouselData
+  document.getElementById('ia-slide-inner').innerHTML =
+    iaRenderMode === 'editorial'
+      ? buildSlideEditorial(c.slides[i], c.theme, i+1, c.slides.length, iaSlideImages[i])
+      : buildSlideIAFondo(c.slides[i], c.theme, i+1, c.slides.length, iaSlideImages[i])
+  document.getElementById('ia-nav-info').textContent = `${i+1} / ${c.slides.length}`
+  document.getElementById('ia-btn-prev').disabled = i === 0
+  document.getElementById('ia-btn-next').disabled = i === c.slides.length - 1
+  document.querySelectorAll('#ia-dots .dot').forEach((d,di) => d.className = 'dot'+(di===i?' active':''))
+  document.querySelectorAll('#ia-thumbnails .thumb-nav').forEach((t,ti) => t.className = 'thumb-nav'+(ti===i?' active':''))
+}
+
+function iaNavigate(dir) {
+  const n = iaCurrentSlide + dir
+  if (n >= 0 && n < iaCarouselData.slides.length) iaGoTo(n)
+}
+
+function switchRenderMode(mode) {
+  iaRenderMode = mode
+  document.getElementById('rm-fondo').classList.toggle('active', mode === 'fondo')
+  document.getElementById('rm-editorial').classList.toggle('active', mode === 'editorial')
+  iaGoTo(iaCurrentSlide)
+}
+
+// ── Build IA slide: FONDO mode ────────────────────────────────
+function buildSlideIAFondo(slide, theme, num, total, imageUrl) {
+  const imgStyle = imageUrl ? `background-image:url('${imageUrl}')` : `background:${theme.bg_fallback||'#0d0d0d'}`
+  const overlay  = slide.overlay || {}
+  const design   = slide.design  || {}
+  const content  = slide.content || {}
+  const fontClass  = `font-${theme.font_style || 'modern'}`
+  const posClass   = `pos-${design.text_position || 'bottom'}`
+  const alignClass = `align-${design.text_align || 'left'}`
+  const sizeClass  = `size-${design.title_size || 'lg'}`
+  const accent = design.accent_color || theme.accent_color || '#f5c518'
+  const txtCol = design.text_color || '#ffffff'
+
+  return `<div class="ig-slide ${fontClass} ${posClass} ${alignClass} ${sizeClass}"
+       style="--slide-accent:${accent};--slide-text:${txtCol};background:${theme.bg_fallback||'#0d0d0d'}">
+    <div class="slide-bg" style="${imgStyle}"></div>
+    <div class="slide-overlay" style="${buildOverlay(overlay)}"></div>
+    <div class="slide-content">
+      ${content.badge    ? `<div class="badge">${content.badge}</div>` : ''}
+      ${content.titulo   ? `<h1 class="titulo">${content.titulo}</h1>` : ''}
+      ${content.subtitulo? `<p class="subtitulo">${content.subtitulo}</p>` : ''}
+      ${content.cuerpo   ? `<p class="cuerpo">${content.cuerpo}</p>` : ''}
+      ${content.cta      ? `<span class="cta-text">${content.cta}</span>` : ''}
+    </div>
+    <div class="slide-num-indicator">${num} / ${total}</div>
+  </div>`
+}
+
+// ── Build IA slide: EDITORIAL mode ────────────────────────────
+function buildSlideEditorial(slide, theme, num, total, imageUrl) {
+  const design  = slide.design  || {}
+  const content = slide.content || {}
+  const accent  = design.accent_color || theme.accent_color || '#f5c518'
+  const txtCol  = design.text_color  || '#ffffff'
+  const bg      = theme.bg_fallback  || '#0d0d0d'
+  const fontClass = `edit-font-${theme.font_style || 'modern'}`
+  const szMap = { xl: 'sz-xl', lg: 'sz-lg', md: 'sz-md' }
+  const sz = szMap[design.title_size] || 'sz-lg'
+  const imgBg = imageUrl ? `background-image:url('${imageUrl}')` : `background:${bg}`
+
+  return `<div class="ig-slide-editorial ${fontClass}"
+       style="--slide-accent:${accent};--slide-text:${txtCol};--slide-text-c:${txtCol}">
+    <div class="edit-img" style="${imgBg}"></div>
+    <div class="edit-panel" style="background:${bg}">
+      <div class="edit-inner">
+        ${content.badge    ? `<div class="badge">${content.badge}</div>` : ''}
+        ${content.titulo   ? `<h1 class="titulo ${sz}">${content.titulo}</h1>` : ''}
+        ${content.subtitulo? `<p class="subtitulo">${content.subtitulo}</p>` : ''}
+        ${content.cuerpo   ? `<p class="cuerpo">${content.cuerpo}</p>` : ''}
+        ${content.cta      ? `<span class="cta-text">${content.cta}</span>` : ''}
+      </div>
+    </div>
+    <div class="edit-num">${num} / ${total}</div>
+  </div>`
+}
+
+// ── Download IA ───────────────────────────────────────────────
+async function downloadCurrentIA() {
+  const btn = document.getElementById('ia-btn-dl-slide')
+  const status = document.getElementById('ia-dl-status')
+  btn.disabled = true; status.textContent = 'Generando PNG...'
+  try { await downloadSlideIA(iaCurrentSlide); status.textContent = '✓ Descargado' }
+  catch(e) { status.textContent = 'Error' }
+  btn.disabled = false
+  setTimeout(() => status.textContent = '', 2000)
+}
+
+async function downloadAllIA() {
+  const btn = document.getElementById('ia-btn-dl-all')
+  btn.disabled = true
+  for (let i = 0; i < iaCarouselData.slides.length; i++) {
+    btn.textContent = `Descargando ${i+1}/${iaCarouselData.slides.length}...`
+    await downloadSlideIA(i)
+    await new Promise(r => setTimeout(r, 400))
+  }
+  btn.disabled = false; btn.textContent = '⬇ Descargar todos'
+}
+
+async function downloadSlideIA(index) {
+  const c = iaCarouselData
+  const container = document.createElement('div')
+  container.style.cssText = 'position:fixed;left:-9999px;top:0;width:1080px;height:1350px;overflow:hidden;z-index:-1'
+  container.innerHTML = iaRenderMode === 'editorial'
+    ? buildSlideEditorial(c.slides[index], c.theme, index+1, c.slides.length, iaSlideImages[index])
+    : buildSlideIAFondo(c.slides[index], c.theme, index+1, c.slides.length, iaSlideImages[index])
+  document.body.appendChild(container)
+  await new Promise(r => setTimeout(r, 300))
+  const canvas = await html2canvas(container, {
+    width:1080, height:1350, scale:1, useCORS:true, allowTaint:true,
+    backgroundColor: c.theme.bg_fallback || '#0d0d0d'
+  })
+  document.body.removeChild(container)
+  const a = document.createElement('a')
+  a.download = `slide-ia-${String(index+1).padStart(2,'0')}.png`
+  a.href = canvas.toDataURL('image/png'); a.click()
+}
+
+// Keyboard nav for IA view
+document.addEventListener('keydown', e => {
+  const iaResultVisible = document.getElementById('ia-result').style.display !== 'none'
+  if (!iaCarouselData || !iaResultVisible) return
+  if (e.key === 'ArrowLeft') iaNavigate(-1)
+  if (e.key === 'ArrowRight') iaNavigate(1)
+})
 
 // ── Utils ─────────────────────────────────────────────────────
 function compressImage(file) {
