@@ -2031,12 +2031,26 @@ function renderHistGrid(carousels) {
   }).join('')
 }
 
+// Arregla URLs rotos generados por bug del cliente Supabase (/public/sign/bucket en vez de /public/bucket)
+function fixStorageUrl(url) {
+  if (!url) return url
+  const idx = url.indexOf('/carousel-slides/')
+  if (idx !== -1) {
+    const path = url.substring(idx + '/carousel-slides/'.length).split('?')[0]
+    return `https://gmmbueltuodcsgapgssn.supabase.co/storage/v1/object/public/carousel-slides/${path}`
+  }
+  return url
+}
+
 async function openCarousel(id) {
   showHistPhase('loading')
   try {
     const res = await fetch(`${API}/api/get-carousel?id=${id}`)
     const data = await res.json()
     if (!data.ok) throw new Error(data.error)
+    // Arreglar URLs rotos en el frontend como fallback extra
+    if (data.slideUrls) data.slideUrls = data.slideUrls.map(fixStorageUrl)
+    if (data.carousel?.thumbnail_url) data.carousel.thumbnail_url = fixStorageUrl(data.carousel.thumbnail_url)
     hvData = data
     hvCurrentSlide = 0
     renderViewer()
