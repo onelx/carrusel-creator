@@ -30,11 +30,13 @@ const server = http.createServer(async (req, res) => {
     if (!fs.existsSync(handlerPath)) {
       res.writeHead(404); res.end('API not found'); return
     }
+    // Parse query params
+    req.query = Object.fromEntries(url.searchParams.entries())
     // Parse body
     let body = ''
     req.on('data', d => { body += d })
     req.on('end', async () => {
-      req.body = body ? JSON.parse(body) : {}
+      try { req.body = body ? JSON.parse(body) : {} } catch { req.body = {} }
       // Mock res
       const mockRes = {
         _status: 200, _headers: {}, _body: null,

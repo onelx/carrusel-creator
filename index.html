@@ -506,6 +506,58 @@
     }
     .rm-opt.active { background: var(--accent); color: #000; }
 
+    /* ══ SAVE STATUS ══ */
+    .save-status {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.62rem; color: var(--muted2); min-width: 140px;
+      transition: color 0.2s;
+    }
+    .save-status.saving { color: var(--accent); }
+    .save-status.saved  { color: var(--success); }
+    .save-status.error  { color: var(--error); }
+
+    /* ══ HISTORIAL ══ */
+    .carousels-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 14px; margin-top: 20px;
+    }
+    .carousel-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .carousel-card:hover {
+      border-color: var(--accent); transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    .cc-thumb {
+      aspect-ratio: 4/5; background-size: cover; background-position: center;
+      background-color: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cc-thumb-ph { font-size: 2rem; opacity: 0.2; }
+    .cc-info { padding: 10px 12px; }
+    .cc-title {
+      font-size: 0.72rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .cc-meta { font-size: 0.58rem; color: var(--muted2); margin-top: 3px; }
+    .cc-badge {
+      display: inline-block; font-size: 0.5rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 4px; margin-top: 6px;
+    }
+    .cc-badge-fotos { background: rgba(16,185,129,0.15); color: var(--success); }
+    .cc-badge-ia    { background: rgba(245,197,24,0.15);  color: var(--accent); }
+
+    .hist-empty {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 12px; min-height: 280px;
+      color: var(--muted); text-align: center;
+    }
+    .hist-empty .ph-icon { font-size: 2.5rem; opacity: 0.2; }
+
     /* Scrollbar */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
@@ -534,6 +586,11 @@
       <button class="nav-item" id="nav-ia" onclick="switchView('ia')">
         <span class="nav-icon">✨</span>
         <span class="nav-label">Con IA</span>
+      </button>
+
+      <button class="nav-item" id="nav-historial" onclick="switchView('historial')">
+        <span class="nav-icon">🗂</span>
+        <span class="nav-label">Historial</span>
       </button>
 
     </div>
@@ -661,6 +718,7 @@
             <div class="result-subtitle" id="result-subtitle">0 slides · 1080×1350px</div>
           </div>
           <div class="result-actions">
+            <div class="save-status" id="fotos-save-status"></div>
             <button class="btn-sm btn-outline" onclick="restartFotos()">↩ Nuevo</button>
             <button class="btn-sm btn-filled" onclick="downloadAll()" id="btn-dl-all">⬇ Descargar todos</button>
           </div>
@@ -784,6 +842,7 @@
             <div class="result-subtitle" id="ia-result-subtitle">0 slides · 1080×1350px · Gemini</div>
           </div>
           <div class="result-actions">
+            <div class="save-status" id="ia-save-status"></div>
             <div class="render-mode-switch">
               <button class="rm-opt active" id="rm-fondo"     onclick="switchRenderMode('fondo')">🖼 Fondo</button>
               <button class="rm-opt"        id="rm-editorial" onclick="switchRenderMode('editorial')">📰 Editorial</button>
@@ -814,6 +873,71 @@
 
     </div><!-- /view-ia -->
 
+    <!-- ══ VIEW: HISTORIAL ══ -->
+    <div class="view" id="view-historial">
+
+      <!-- Loading -->
+      <div id="hist-loading" style="display:none">
+        <div class="loading-center">
+          <div class="loading-ring"></div>
+          <div class="loading-title">Cargando historial...</div>
+        </div>
+      </div>
+
+      <!-- Grid -->
+      <div id="hist-grid">
+        <div class="result-header">
+          <div>
+            <div class="result-title">Mis carruseles</div>
+            <div class="result-subtitle" id="hist-count">—</div>
+          </div>
+          <div class="result-actions">
+            <button class="btn-sm btn-outline" onclick="loadHistorial()">↻ Actualizar</button>
+          </div>
+        </div>
+        <div class="hist-empty" id="hist-empty" style="display:none">
+          <div class="ph-icon">🗂</div>
+          <div style="font-size:0.85rem;font-weight:700;color:var(--muted2)">Todavía no hay carruseles guardados</div>
+          <p style="font-size:0.72rem;max-width:260px;line-height:1.6">Generá uno desde "Desde fotos" o "Con IA" — se guarda automáticamente</p>
+        </div>
+        <div class="carousels-grid" id="hist-cards"></div>
+      </div>
+
+      <!-- Viewer (un carrusel abierto) -->
+      <div id="hist-viewer" style="display:none">
+
+        <div class="result-header">
+          <div>
+            <div class="result-title" id="hv-title">Carrusel</div>
+            <div class="result-subtitle" id="hv-subtitle"></div>
+          </div>
+          <div class="result-actions">
+            <button class="btn-sm btn-outline" onclick="closeViewer()">← Volver</button>
+            <button class="btn-sm btn-filled" onclick="downloadAllViewer()" id="hv-btn-dl">⬇ Descargar todos</button>
+          </div>
+        </div>
+
+        <div class="carousel-stage">
+          <div class="slide-wrapper">
+            <div class="slide-inner" id="hv-slide-inner"></div>
+          </div>
+          <div class="carousel-nav">
+            <button class="nav-btn" id="hv-btn-prev" onclick="hvNavigate(-1)">←</button>
+            <div class="dots" id="hv-dots"></div>
+            <div class="nav-info" id="hv-nav-info">1 / 1</div>
+            <button class="nav-btn" id="hv-btn-next" onclick="hvNavigate(1)">→</button>
+          </div>
+          <div class="thumbnails" id="hv-thumbnails"></div>
+          <div class="slide-download">
+            <button class="btn-sm btn-outline" onclick="downloadCurrentViewer()">⬇ Slide actual</button>
+            <span style="font-size:0.62rem;color:var(--muted2)" id="hv-dl-status"></span>
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- /view-historial -->
+
   </div><!-- /main -->
 
 </div><!-- /shell -->
@@ -829,8 +953,9 @@ let currentSlide = 0
 
 // ── Sidebar navigation ────────────────────────────────────────
 const views = {
-  fotos: { title: 'Carrusel desde fotos', desc: '— Claude elige la imagen perfecta para cada slide' },
-  ia:    { title: 'Carrusel con IA',       desc: '— Gemini genera imágenes para cada idea' }
+  fotos:    { title: 'Carrusel desde fotos', desc: '— Claude elige la imagen perfecta para cada slide' },
+  ia:       { title: 'Carrusel con IA',       desc: '— Gemini genera imágenes para cada idea' },
+  historial:{ title: 'Historial',             desc: '— Todos tus carruseles guardados' }
 }
 
 function switchView(name) {
@@ -840,6 +965,7 @@ function switchView(name) {
   document.getElementById(`view-${name}`).classList.add('active')
   document.getElementById('topbar-title').textContent = views[name].title
   document.getElementById('topbar-desc').textContent = views[name].desc
+  if (name === 'historial') loadHistorial()
 }
 
 // ── Text handling ─────────────────────────────────────────────
@@ -953,6 +1079,7 @@ async function generateCarousel() {
     currentSlide = 0
     renderResult()
     showFotosPhase('result')
+    saveCarouselToSupabase('fotos', document.getElementById('fotos-save-status'))
   } catch (err) {
     showFotosPhase('upload')
     const el = document.getElementById('upload-error')
@@ -1257,6 +1384,7 @@ async function generateIA() {
     iaCurrentSlide = 0
     iaRenderResult()
     showIAPhase('result')
+    saveCarouselToSupabase('ia', document.getElementById('ia-save-status'))
 
   } catch (err) {
     console.error(err)
@@ -1412,6 +1540,235 @@ async function downloadSlideIA(index) {
   const a = document.createElement('a')
   a.download = `slide-ia-${String(index+1).padStart(2,'0')}.png`
   a.href = canvas.toDataURL('image/png'); a.click()
+}
+
+// ══════════════════════════════════════════════════════════════
+// ── GUARDAR EN SUPABASE ───────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+
+async function renderSlideToPNG(index, mode) {
+  const c = mode === 'ia' ? iaCarouselData : carouselData
+  const container = document.createElement('div')
+  container.style.cssText = 'position:fixed;left:-9999px;top:0;width:1080px;height:1350px;overflow:hidden;z-index:-1'
+
+  if (mode === 'ia') {
+    container.innerHTML = iaRenderMode === 'editorial'
+      ? buildSlideEditorial(c.slides[index], c.theme, index+1, c.slides.length, iaSlideImages[index])
+      : buildSlideIAFondo(c.slides[index],   c.theme, index+1, c.slides.length, iaSlideImages[index])
+  } else {
+    container.innerHTML = buildSlideHTML(c.slides[index], c.theme, index+1, c.slides.length)
+  }
+
+  document.body.appendChild(container)
+  await new Promise(r => setTimeout(r, 300))
+  const canvas = await html2canvas(container, {
+    width:1080, height:1350, scale:1, useCORS:true, allowTaint:true,
+    backgroundColor: c.theme.bg_fallback || '#0d0d0d'
+  })
+  document.body.removeChild(container)
+  return canvas.toDataURL('image/png').split(',')[1]
+}
+
+async function saveCarouselToSupabase(mode, statusEl) {
+  const c = mode === 'ia' ? iaCarouselData : carouselData
+  if (!c) return
+
+  const setStatus = (cls, text) => {
+    if (!statusEl) return
+    statusEl.className = `save-status ${cls}`
+    statusEl.textContent = text
+  }
+
+  setStatus('saving', '⏳ Guardando...')
+
+  try {
+    // Renderizar cada slide a PNG
+    const slideImages = []
+    for (let i = 0; i < c.slides.length; i++) {
+      slideImages.push(await renderSlideToPNG(i, mode))
+    }
+
+    const res = await fetch(`${API}/api/save-carousel`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: c.tema || 'Sin título',
+        mode,
+        renderMode: mode === 'ia' ? iaRenderMode : null,
+        theme: c.theme,
+        slides: c.slides,
+        slideImages
+      })
+    })
+
+    const data = await res.json()
+    if (!data.ok) throw new Error(data.error)
+
+    setStatus('saved', '✓ Guardado en historial')
+    setTimeout(() => setStatus('', ''), 3500)
+  } catch (err) {
+    console.error('Save error:', err)
+    setStatus('error', '✕ Error al guardar')
+    setTimeout(() => setStatus('', ''), 4000)
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ── HISTORIAL ─────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+
+let hvData = null
+let hvCurrentSlide = 0
+
+function showHistPhase(phase) {
+  document.getElementById('hist-loading').style.display = phase === 'loading' ? 'block' : 'none'
+  document.getElementById('hist-grid').style.display    = phase === 'grid'    ? 'block' : 'none'
+  document.getElementById('hist-viewer').style.display  = phase === 'viewer'  ? 'block' : 'none'
+}
+
+async function loadHistorial() {
+  showHistPhase('loading')
+  try {
+    const res = await fetch(`${API}/api/list-carousels`)
+    const data = await res.json()
+    renderHistGrid(data.carousels || [])
+  } catch(err) {
+    console.error(err)
+    renderHistGrid([])
+  }
+  showHistPhase('grid')
+}
+
+function renderHistGrid(carousels) {
+  const countEl = document.getElementById('hist-count')
+  const emptyEl = document.getElementById('hist-empty')
+  const cardsEl = document.getElementById('hist-cards')
+
+  countEl.textContent = `${carousels.length} carrusel${carousels.length !== 1 ? 'es' : ''} guardado${carousels.length !== 1 ? 's' : ''}`
+
+  if (!carousels.length) {
+    emptyEl.style.display = 'flex'
+    cardsEl.innerHTML = ''
+    return
+  }
+
+  emptyEl.style.display = 'none'
+  cardsEl.innerHTML = carousels.map(c => {
+    const date = new Date(c.created_at).toLocaleDateString('es-AR', { day:'2-digit', month:'short', year:'numeric' })
+    const modeLabel = c.mode === 'ia' ? '✨ Con IA' : '📷 Desde fotos'
+    const modeClass = c.mode === 'ia' ? 'cc-badge-ia' : 'cc-badge-fotos'
+    return `
+      <div class="carousel-card" onclick="openCarousel('${c.id}')">
+        <div class="cc-thumb" ${c.thumbnail_url ? `style="background-image:url('${c.thumbnail_url}')"` : ''}>
+          ${!c.thumbnail_url ? '<div class="cc-thumb-ph">🖼</div>' : ''}
+        </div>
+        <div class="cc-info">
+          <div class="cc-title">${c.title}</div>
+          <div class="cc-meta">${c.slide_count} slides · ${date}</div>
+          <div class="cc-badge ${modeClass}">${modeLabel}</div>
+        </div>
+      </div>`
+  }).join('')
+}
+
+async function openCarousel(id) {
+  showHistPhase('loading')
+  try {
+    const res = await fetch(`${API}/api/get-carousel?id=${id}`)
+    const data = await res.json()
+    if (!data.ok) throw new Error(data.error)
+    hvData = data
+    hvCurrentSlide = 0
+    renderViewer()
+    showHistPhase('viewer')
+  } catch(err) {
+    console.error(err)
+    showHistPhase('grid')
+  }
+}
+
+function renderViewer() {
+  const { carousel, slideUrls } = hvData
+  document.getElementById('hv-title').textContent = carousel.title
+
+  const date = new Date(carousel.created_at).toLocaleDateString('es-AR', { day:'2-digit', month:'short', year:'numeric' })
+  const modeLabel = carousel.mode === 'ia' ? 'Con IA' : 'Desde fotos'
+  const renderLabel = carousel.render_mode ? ` · ${carousel.render_mode}` : ''
+  document.getElementById('hv-subtitle').textContent = `${carousel.slide_count} slides · ${modeLabel}${renderLabel} · ${date}`
+
+  document.getElementById('hv-dots').innerHTML = carousel.slides.map((_,i) =>
+    `<div class="dot ${i===0?'active':''}" onclick="hvGoTo(${i})"></div>`).join('')
+
+  document.getElementById('hv-thumbnails').innerHTML = slideUrls.map((url, i) =>
+    `<div class="thumb-nav ${i===0?'active':''}" onclick="hvGoTo(${i})">
+      <img src="${url}" />
+      <div class="tn-num">${i+1}</div>
+    </div>`).join('')
+
+  hvGoTo(0)
+}
+
+function hvGoTo(i) {
+  hvCurrentSlide = i
+  const { carousel, slideUrls } = hvData
+  const slide = carousel.slides[i]
+  const renderMode = carousel.render_mode || 'fondo'
+
+  document.getElementById('hv-slide-inner').innerHTML =
+    renderMode === 'editorial'
+      ? buildSlideEditorial(slide, carousel.theme, i+1, carousel.slide_count, slideUrls[i])
+      : buildSlideIAFondo(slide, carousel.theme, i+1, carousel.slide_count, slideUrls[i])
+
+  document.getElementById('hv-nav-info').textContent = `${i+1} / ${carousel.slide_count}`
+  document.getElementById('hv-btn-prev').disabled = i === 0
+  document.getElementById('hv-btn-next').disabled = i === carousel.slide_count - 1
+  document.querySelectorAll('#hv-dots .dot').forEach((d,di) => d.className = 'dot'+(di===i?' active':''))
+  document.querySelectorAll('#hv-thumbnails .thumb-nav').forEach((t,ti) => t.className = 'thumb-nav'+(ti===i?' active':''))
+}
+
+function hvNavigate(dir) {
+  const n = hvCurrentSlide + dir
+  if (hvData && n >= 0 && n < hvData.carousel.slide_count) hvGoTo(n)
+}
+
+function closeViewer() {
+  showHistPhase('grid')
+}
+
+async function downloadCurrentViewer() {
+  const status = document.getElementById('hv-dl-status')
+  status.textContent = 'Descargando...'
+  try {
+    const url = hvData.slideUrls[hvCurrentSlide]
+    const res = await fetch(url)
+    const blob = await res.blob()
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = `slide-${String(hvCurrentSlide+1).padStart(2,'0')}.png`
+    a.click()
+    status.textContent = '✓ Descargado'
+  } catch { status.textContent = 'Error' }
+  setTimeout(() => status.textContent = '', 2000)
+}
+
+async function downloadAllViewer() {
+  const btn = document.getElementById('hv-btn-dl')
+  btn.disabled = true
+  const total = hvData.slideUrls.length
+  for (let i = 0; i < total; i++) {
+    btn.textContent = `Descargando ${i+1}/${total}...`
+    try {
+      const res = await fetch(hvData.slideUrls[i])
+      const blob = await res.blob()
+      const a = document.createElement('a')
+      a.href = URL.createObjectURL(blob)
+      a.download = `slide-${String(i+1).padStart(2,'0')}.png`
+      a.click()
+    } catch(e) { console.error(e) }
+    await new Promise(r => setTimeout(r, 600))
+  }
+  btn.disabled = false
+  btn.textContent = '⬇ Descargar todos'
 }
 
 // Keyboard nav for IA view
