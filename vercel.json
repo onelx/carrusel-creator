@@ -9,6 +9,7 @@
     { "src": "/api/generate-carousel-ia", "dest": "/api/generate-carousel-ia.js" },
     { "src": "/api/generate-slide-image", "dest": "/api/generate-slide-image.js" },
     { "src": "/api/save-carousel",        "dest": "/api/save-carousel.js" },
+    { "src": "/api/rate-carousel",        "dest": "/api/rate-carousel.js" },
     { "src": "/api/confirm-carousel",     "dest": "/api/confirm-carousel.js" },
     { "src": "/api/list-carousels",       "dest": "/api/list-carousels.js" },
     { "src": "/api/get-carousel",         "dest": "/api/get-carousel.js" },

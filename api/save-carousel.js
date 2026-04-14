@@ -11,7 +11,7 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end()
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
-  const { title, mode, renderMode, theme, slides, thumbnailB64 } = req.body
+  const { title, mode, renderMode, theme, slides, thumbnailB64, agent1Output, agent2Output } = req.body
   if (!title || !mode || !slides) {
     return res.status(400).json({ error: 'Faltan campos requeridos' })
   }
@@ -29,7 +29,9 @@ module.exports = async function handler(req, res) {
         slide_count: slides.length,
         theme,
         slides,
-        thumbnail_url: null
+        thumbnail_url: null,
+        agent1_output: agent1Output || null,
+        agent2_output: agent2Output || null
       })
       .select('id')
       .single()

@@ -12,7 +12,7 @@ module.exports = async function handler(req, res) {
   try {
     const { data, error } = await supabase
       .from('carousels')
-      .select('id, created_at, title, mode, render_mode, slide_count, thumbnail_url')
+      .select('id, created_at, title, mode, render_mode, slide_count, thumbnail_url, rating')
       .order('created_at', { ascending: false })
       .limit(60)
 

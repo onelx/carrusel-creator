@@ -506,6 +506,90 @@
     }
     .rm-opt.active { background: var(--accent); color: #000; }
 
+    /* ══ CHIPS (tono, estilo visual) ══ */
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      padding: 6px 13px; border-radius: 20px;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--muted2); font-family: inherit; font-size: 0.68rem;
+      font-weight: 600; cursor: pointer; transition: all 0.15s;
+    }
+    .chip:hover { border-color: var(--accent); color: var(--text); }
+    .chip.active { background: rgba(245,197,24,0.12); border-color: var(--accent); color: var(--accent); }
+
+    /* ══ FIELD INPUT (texto corto) ══ */
+    .field-input {
+      width: 100%; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 9px 12px; color: var(--text); font-family: inherit;
+      font-size: 0.75rem; outline: none;
+    }
+    .field-input:focus { border-color: var(--accent); }
+
+    /* ══ DIRECTION GROUP ══ */
+    .direction-group { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+    .direction-group:last-child { margin-bottom: 0; }
+
+    /* ══ PALETA DE COLORES ══ */
+    .palette-row { display: flex; gap: 8px; align-items: center; }
+    .color-swatch {
+      position: relative; width: 36px; height: 36px;
+      border-radius: 8px; border: 2px solid var(--border);
+      overflow: hidden; cursor: pointer; flex-shrink: 0;
+    }
+    .color-swatch input[type="color"] {
+      position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px);
+      opacity: 0; cursor: pointer; border: none;
+    }
+    .color-swatch .swatch-bg { width: 100%; height: 100%; }
+
+    /* ══ AGENT EVALUATIONS ══ */
+    .agent-evals { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    .agent-eval-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+    }
+    .agent-eval-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; cursor: pointer; user-select: none;
+    }
+    .agent-eval-header:hover { background: var(--surface2); }
+    .aeh-left { display: flex; align-items: center; gap: 8px; }
+    .aeh-name { font-size: 0.68rem; font-weight: 700; }
+    .aeh-score { font-size: 0.65rem; color: var(--muted2); }
+    .aeh-stars { font-size: 0.8rem; }
+    .aeh-toggle { font-size: 0.6rem; color: var(--muted); }
+    .agent-eval-body { display: none; padding: 12px 14px; border-top: 1px solid var(--border); }
+    .agent-eval-body.open { display: block; }
+    .eval-criteria { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+    .eval-item { font-size: 0.6rem; color: var(--muted2); }
+    .eval-item strong { display: block; color: var(--text); font-size: 0.68rem; }
+    .eval-revision {
+      font-size: 0.62rem; color: var(--muted2); font-style: italic;
+      border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* ══ STAR RATING (usuario) ══ */
+    .stars-section {
+      display: flex; align-items: center; gap: 14px; margin-top: 20px;
+      padding: 14px 18px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 10px; flex-wrap: wrap;
+    }
+    .stars-label { font-size: 0.65rem; font-weight: 700; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.08em; }
+    .stars { display: flex; gap: 2px; }
+    .star-btn {
+      font-size: 1.5rem; cursor: pointer; background: none; border: none;
+      opacity: 0.25; transition: all 0.1s; line-height: 1;
+      filter: grayscale(1); padding: 2px;
+    }
+    .star-btn.lit { opacity: 1; filter: grayscale(0); }
+    .star-btn:hover { transform: scale(1.15); }
+    .stars-status { font-size: 0.62rem; color: var(--success); margin-left: 4px; }
+
+    /* ══ HISTORIAL — rating badge ══ */
+    .cc-rating { font-size: 0.7rem; margin-top: 4px; }
+
     /* ══ SAVE STATUS ══ */
     .save-status {
       display: flex; align-items: center; gap: 6px;
@@ -750,7 +834,7 @@
 
       <!-- Phase: Upload -->
       <div id="ia-upload">
-        <div style="max-width:660px;display:flex;flex-direction:column;gap:20px">
+        <div style="max-width:700px;display:flex;flex-direction:column;gap:20px">
 
           <!-- Brief -->
           <div class="upload-card">
@@ -758,48 +842,114 @@
               <span class="card-icon">📝</span>
               <div>
                 <div class="card-title">Brief / Idea</div>
-                <div class="card-desc">Claude extrae las ideas clave y escribe el copy de cada slide</div>
+                <div class="card-desc">El Director Creativo lo analiza y diseña la narrativa</div>
               </div>
             </div>
             <div class="card-body">
-              <label class="field-label">Tu texto, reflexión o artículo:</label>
-              <textarea class="field-textarea" id="ia-brief" rows="8"
-                placeholder="Escribí tu idea, brief o reflexión aquí. Claude la va a convertir en un carrusel de 4-6 slides con imágenes generadas por Gemini..."
+              <label class="field-label">Tu texto, idea o reflexión:</label>
+              <textarea class="field-textarea" id="ia-brief" rows="6"
+                placeholder="Escribí tu idea, artículo o reflexión. El Director Creativo la transforma en concepto y el Ejecutor lo lleva a slides..."
                 oninput="iaUpdateBtn()"></textarea>
+            </div>
+          </div>
+
+          <!-- Dirección Creativa -->
+          <div class="upload-card">
+            <div class="card-header">
+              <span class="card-icon">🎯</span>
+              <div>
+                <div class="card-title">Dirección Creativa</div>
+                <div class="card-desc">Guía al Director Creativo y al Ejecutor para afinar el resultado</div>
+              </div>
+            </div>
+            <div class="card-body">
+
+              <div class="direction-group">
+                <label class="field-label">Tono de voz</label>
+                <div class="chips" id="chips-tono">
+                  <button class="chip active" data-val="inspiracional">💫 Inspiracional</button>
+                  <button class="chip" data-val="educativo">📚 Educativo</button>
+                  <button class="chip" data-val="comercial">💼 Comercial</button>
+                  <button class="chip" data-val="casual">😊 Casual</button>
+                  <button class="chip" data-val="formal">🎩 Formal</button>
+                </div>
+              </div>
+
+              <div class="direction-group">
+                <label class="field-label">Audiencia objetivo</label>
+                <input class="field-input" id="ia-audiencia" placeholder="Ej: Emprendedores 25-40 años, interesados en marketing" />
+              </div>
+
+              <div class="direction-group">
+                <label class="field-label">Estilo visual</label>
+                <div class="chips" id="chips-estilo">
+                  <button class="chip active" data-val="editorial">📰 Editorial</button>
+                  <button class="chip" data-val="minimalista">⬜ Minimalista</button>
+                  <button class="chip" data-val="dramatico">🎭 Dramático</button>
+                  <button class="chip" data-val="vibrante">🌈 Vibrante</button>
+                  <button class="chip" data-val="natural">🌿 Natural</button>
+                </div>
+              </div>
+
+              <div class="direction-group">
+                <label class="field-label">Paleta de colores</label>
+                <div class="palette-row">
+                  <div class="color-swatch" title="Color 1">
+                    <div class="swatch-bg" id="swatch-bg-1" style="background:#0d0d0d"></div>
+                    <input type="color" id="pal-1" value="#0d0d0d" oninput="updateSwatch(1)" />
+                  </div>
+                  <div class="color-swatch" title="Color 2">
+                    <div class="swatch-bg" id="swatch-bg-2" style="background:#f5c518"></div>
+                    <input type="color" id="pal-2" value="#f5c518" oninput="updateSwatch(2)" />
+                  </div>
+                  <div class="color-swatch" title="Color 3">
+                    <div class="swatch-bg" id="swatch-bg-3" style="background:#ffffff"></div>
+                    <input type="color" id="pal-3" value="#ffffff" oninput="updateSwatch(3)" />
+                  </div>
+                  <span style="font-size:0.6rem;color:var(--muted2)">Hacé click para cambiar</span>
+                </div>
+              </div>
+
+              <div class="direction-group">
+                <label class="field-label">CTA objetivo</label>
+                <input class="field-input" id="ia-cta" placeholder="Ej: Que guarden el post · Que visiten el perfil · Que comenten" />
+              </div>
+
+              <div class="direction-group">
+                <label class="field-label">Notas extra para los agentes</label>
+                <textarea class="field-textarea" id="ia-notas" rows="2"
+                  placeholder="Cualquier aclaración: referencias, palabras a evitar, casos de uso específicos..."></textarea>
+              </div>
+
             </div>
           </div>
 
           <!-- Style images + render toggle -->
           <div class="upload-card">
             <div class="card-header">
-              <span class="card-icon">🎨</span>
+              <span class="card-icon">🖼</span>
               <div>
-                <div class="card-title">Estilo visual</div>
-                <div class="card-desc">1-2 fotos de referencia para que Gemini adopte el mismo mood</div>
+                <div class="card-title">Referencia visual + Estilo de slide</div>
+                <div class="card-desc">Fotos de referencia para Gemini · Fondo o Editorial</div>
               </div>
             </div>
-            <div class="card-body" style="display:flex;flex-direction:column;gap:16px">
+            <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
 
               <div class="ia-style-dz" id="ia-style-dz">
                 <input type="file" id="ia-style-input" accept="image/jpeg,image/png,image/webp" multiple />
-                <div style="font-size:1.4rem">🖼</div>
-                <div style="font-size:0.78rem;font-weight:600;margin-top:6px">Subí 1-2 fotos de referencia</div>
-                <p>Opcional · JPG, PNG, WEBP</p>
+                <div style="font-size:1.2rem">📸</div>
+                <div style="font-size:0.76rem;font-weight:600;margin-top:4px">Subí 1-2 fotos de referencia</div>
+                <p>Opcional · Gemini adoptará el mismo mood</p>
               </div>
-
               <div class="ia-style-previews" id="ia-style-previews"></div>
 
               <div>
                 <label class="field-label" style="margin-bottom:8px">Estilo de slide:</label>
                 <div class="style-toggle">
-                  <button class="style-opt active" id="ia-opt-fondo" onclick="setIAStyle('fondo')">
-                    🖼 Fondo
-                  </button>
-                  <button class="style-opt" id="ia-opt-editorial" onclick="setIAStyle('editorial')">
-                    📰 Editorial
-                  </button>
+                  <button class="style-opt active" id="ia-opt-fondo" onclick="setIAStyle('fondo')">🖼 Fondo</button>
+                  <button class="style-opt" id="ia-opt-editorial" onclick="setIAStyle('editorial')">📰 Editorial</button>
                 </div>
-                <div style="font-size:0.6rem;color:var(--muted2);margin-top:6px;line-height:1.5" id="ia-style-desc">
+                <div style="font-size:0.6rem;color:var(--muted2);margin-top:6px" id="ia-style-desc">
                   Imagen a full bleed con texto superpuesto
                 </div>
               </div>
@@ -810,7 +960,7 @@
           <div class="err-box" id="ia-error"></div>
 
           <button class="btn-generate" id="ia-btn-gen" onclick="generateIA()" disabled>
-            ✨ Generar Carrusel con IA
+            ✨ Generar con Director Creativo + Ejecutor
           </button>
 
         </div>
@@ -825,10 +975,11 @@
             <div style="font-size:0.7rem;color:var(--muted2);margin-top:4px">Claude + Gemini trabajando en paralelo</div>
           </div>
           <div class="loading-steps">
-            <div class="loading-step" id="ia-ls1"><div class="step-dot"></div> <span class="ia-step-text">Claude leyendo el brief</span></div>
-            <div class="loading-step" id="ia-ls2"><div class="step-dot"></div> <span class="ia-step-text">Diseñando los slides</span></div>
-            <div class="loading-step" id="ia-ls3"><div class="step-dot"></div> <span class="ia-step-text" id="ia-img-progress">Generando imágenes con Gemini</span></div>
-            <div class="loading-step" id="ia-ls4"><div class="step-dot"></div> <span class="ia-step-text">Construyendo el carrusel</span></div>
+            <div class="loading-step" id="ia-ls1"><div class="step-dot"></div> <span>Director Creativo analizando el brief</span></div>
+            <div class="loading-step" id="ia-ls2"><div class="step-dot"></div> <span>Director Creativo diseñando el concepto</span></div>
+            <div class="loading-step" id="ia-ls3"><div class="step-dot"></div> <span>Ejecutor escribiendo copy e imágenes</span></div>
+            <div class="loading-step" id="ia-ls4"><div class="step-dot"></div> <span id="ia-img-progress">Gemini generando imágenes</span></div>
+            <div class="loading-step" id="ia-ls5"><div class="step-dot"></div> <span>Construyendo el carrusel</span></div>
           </div>
         </div>
       </div>
@@ -867,6 +1018,22 @@
             <button class="btn-sm btn-outline" onclick="downloadCurrentIA()" id="ia-btn-dl-slide">⬇ Slide actual</button>
             <span style="font-size:0.62rem;color:var(--muted2)" id="ia-dl-status"></span>
           </div>
+        </div>
+
+        <!-- Evaluaciones de los agentes -->
+        <div class="agent-evals" id="ia-agent-evals"></div>
+
+        <!-- Rating del usuario -->
+        <div class="stars-section" id="ia-stars-section" style="display:none">
+          <span class="stars-label">Tu valoración</span>
+          <div class="stars" id="ia-stars">
+            <button class="star-btn" data-val="1" onclick="rateIA(1)">⭐</button>
+            <button class="star-btn" data-val="2" onclick="rateIA(2)">⭐</button>
+            <button class="star-btn" data-val="3" onclick="rateIA(3)">⭐</button>
+            <button class="star-btn" data-val="4" onclick="rateIA(4)">⭐</button>
+            <button class="star-btn" data-val="5" onclick="rateIA(5)">⭐</button>
+          </div>
+          <span class="stars-status" id="ia-stars-status"></span>
         </div>
 
       </div>
@@ -1244,6 +1411,30 @@ let iaStyleImages    = []     // base64 reference style images
 let iaCurrentSlide   = 0
 let iaRenderMode     = 'fondo'  // 'fondo' | 'editorial'
 
+// ── Chips (single-select) ─────────────────────────────────────
+document.querySelectorAll('.chips').forEach(group => {
+  group.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'))
+      chip.classList.add('active')
+    })
+  })
+})
+
+function getChipVal(groupId) {
+  return document.querySelector(`#${groupId} .chip.active`)?.dataset.val || ''
+}
+
+// ── Palette swatches ──────────────────────────────────────────
+function updateSwatch(n) {
+  const val = document.getElementById(`pal-${n}`).value
+  document.getElementById(`swatch-bg-${n}`).style.background = val
+}
+
+function getPalette() {
+  return [1,2,3].map(n => document.getElementById(`pal-${n}`)?.value).filter(Boolean)
+}
+
 // ── Style image upload ────────────────────────────────────────
 const iaStyleDz    = document.getElementById('ia-style-dz')
 const iaStyleInput = document.getElementById('ia-style-input')
@@ -1316,12 +1507,17 @@ function restartIA() {
 
 // ── Loading step animation ────────────────────────────────────
 function iaSetStep(step) {
-  // step 1-4: set done for all before, active for current
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= 5; i++) {
     const el = document.getElementById(`ia-ls${i}`)
-    el.className = 'loading-step' + (i < step ? ' done' : i === step ? ' active' : '')
+    if (el) el.className = 'loading-step' + (i < step ? ' done' : i === step ? ' active' : '')
   }
 }
+
+// ── IA state para rating ──────────────────────────────────────
+let iaCarouselId  = null
+let iaAgent1Output = null
+let iaAgent2Output = null
+let iaUserRating  = 0
 
 // ── Main generate function ────────────────────────────────────
 async function generateIA() {
@@ -1329,35 +1525,50 @@ async function generateIA() {
   if (!brief) return
 
   document.getElementById('ia-error').style.display = 'none'
+  document.getElementById('ia-agent-evals').innerHTML = ''
+  document.getElementById('ia-stars-section').style.display = 'none'
+  iaCarouselId = null; iaAgent1Output = null; iaAgent2Output = null; iaUserRating = 0
   showIAPhase('loading')
   iaSetStep(1)
 
   try {
-    // ── Step 1 & 2: Claude generates carousel JSON with image prompts ──
-    const claudeRes = await fetch(`${API}/api/generate-carousel-ia`, {
+    // ── Pasos 1-2-3: Agente 1 (Director) + Agente 2 (Ejecutor) ──
+    const creativeDirection = {
+      tono:         getChipVal('chips-tono'),
+      audiencia:    document.getElementById('ia-audiencia').value.trim(),
+      estilo_visual:getChipVal('chips-estilo'),
+      paleta:       getPalette(),
+      cta_objetivo: document.getElementById('ia-cta').value.trim(),
+      notas_extra:  document.getElementById('ia-notas').value.trim()
+    }
+
+    iaSetStep(2)
+    const agentRes = await fetch(`${API}/api/generate-carousel-ia`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         textContent: brief,
-        styleImages: iaStyleImages.map(i => i.b64)
+        styleImages: iaStyleImages.map(i => i.b64),
+        creativeDirection
       })
     })
-    if (!claudeRes.ok) {
-      let msg = `Error ${claudeRes.status}`
-      try { msg = (await claudeRes.json()).error || msg } catch {}
+    if (!agentRes.ok) {
+      let msg = `Error ${agentRes.status}`
+      try { msg = (await agentRes.json()).error || msg } catch {}
       throw new Error(msg)
     }
-    const claudeData = await claudeRes.json()
-    iaCarouselData = claudeData.carousel
-    iaSetStep(2)
+    const agentData = await agentRes.json()
+    iaCarouselData  = agentData.carousel
+    iaAgent1Output  = agentData.agent1Output
+    iaAgent2Output  = agentData.agent2Output
 
-    // Small delay so user can see step 2 progress
-    await new Promise(r => setTimeout(r, 400))
     iaSetStep(3)
+    await new Promise(r => setTimeout(r, 300))
 
-    // ── Step 3: Gemini generates all images in parallel ──
+    // ── Paso 4: Gemini genera imágenes en paralelo ──
+    iaSetStep(4)
     const total = iaCarouselData.slides.length
-    let completedImages = 0
+    let done = 0
 
     const imagePromises = iaCarouselData.slides.map(slide =>
       fetch(`${API}/api/generate-slide-image`, {
@@ -1367,22 +1578,23 @@ async function generateIA() {
       })
       .then(r => r.json())
       .then(data => {
-        completedImages++
+        done++
         document.getElementById('ia-img-progress').textContent =
-          `Generando imágenes ${completedImages}/${total}`
-        if (!data.image) throw new Error('Sin imagen')
+          `Gemini generando imágenes ${done}/${total}`
+        if (!data.image) throw new Error('Sin imagen de Gemini')
         return `data:${data.mimeType || 'image/png'};base64,${data.image}`
       })
     )
-
     iaSlideImages = await Promise.all(imagePromises)
 
-    // ── Step 4: Render ──
-    iaSetStep(4)
+    // ── Paso 5: Render ──
+    iaSetStep(5)
     await new Promise(r => setTimeout(r, 300))
 
     iaCurrentSlide = 0
     iaRenderResult()
+    renderAgentEvals(iaAgent1Output, iaAgent2Output)
+    document.getElementById('ia-stars-section').style.display = 'flex'
     showIAPhase('result')
     saveCarouselToSupabase('ia', document.getElementById('ia-save-status'))
 
@@ -1543,6 +1755,91 @@ async function downloadSlideIA(index) {
 }
 
 // ══════════════════════════════════════════════════════════════
+// ── EVALUACIONES DE AGENTES ───────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+
+function starsHtml(score) {
+  const full = Math.round(score)
+  return '⭐'.repeat(full) + '☆'.repeat(5 - full)
+}
+
+function renderAgentEvals(a1, a2) {
+  const el = document.getElementById('ia-agent-evals')
+  if (!el || (!a1 && !a2)) return
+
+  const evalCard = (name, icon, eval_) => {
+    if (!eval_) return ''
+    const { nota_promedio, revision, ...criteria } = eval_
+    const criteriaHtml = Object.entries(criteria).map(([k, v]) =>
+      `<div class="eval-item"><strong>${v}/5 ${starsHtml(v)}</strong>${k.replace(/_/g,' ')}</div>`
+    ).join('')
+    return `
+      <div class="agent-eval-card">
+        <div class="agent-eval-header" onclick="toggleEval(this)">
+          <div class="aeh-left">
+            <span>${icon}</span>
+            <span class="aeh-name">${name}</span>
+            <span class="aeh-score">Autoevaluación</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="aeh-stars">${starsHtml(nota_promedio)} <strong style="font-size:0.7rem">${nota_promedio}/5</strong></span>
+            <span class="aeh-toggle">▾</span>
+          </div>
+        </div>
+        <div class="agent-eval-body">
+          <div class="eval-criteria">${criteriaHtml}</div>
+          ${revision ? `<div class="eval-revision">💬 "${revision}"</div>` : ''}
+        </div>
+      </div>`
+  }
+
+  el.innerHTML =
+    evalCard('Director Creativo', '🎯', a1?.autoevaluacion) +
+    evalCard('Ejecutor',          '✏️', a2?.autoevaluacion)
+}
+
+function toggleEval(header) {
+  const body = header.nextElementSibling
+  const toggle = header.querySelector('.aeh-toggle')
+  body.classList.toggle('open')
+  toggle.textContent = body.classList.contains('open') ? '▴' : '▾'
+}
+
+// ── Rating del usuario ────────────────────────────────────────
+async function rateIA(val) {
+  iaUserRating = val
+  // Actualizar estrellas visualmente
+  document.querySelectorAll('#ia-stars .star-btn').forEach(btn => {
+    btn.classList.toggle('lit', parseInt(btn.dataset.val) <= val)
+  })
+
+  const status = document.getElementById('ia-stars-status')
+  status.textContent = ''
+
+  if (!iaCarouselId) {
+    status.textContent = '(guardando carrusel primero...)'
+    return
+  }
+
+  try {
+    await fetch(`${API}/api/rate-carousel`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: iaCarouselId,
+        rating: val,
+        agent1Output: iaAgent1Output,
+        agent2Output: iaAgent2Output
+      })
+    })
+    const labels = ['', 'Mejorable', 'Regular', 'Bueno', 'Muy bueno', '¡Excelente!']
+    status.textContent = `✓ ${labels[val]}`
+  } catch (err) {
+    status.textContent = 'Error al guardar'
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
 // ── GUARDAR EN SUPABASE ───────────────────────────────────────
 // ══════════════════════════════════════════════════════════════
 
@@ -1601,7 +1898,9 @@ async function saveCarouselToSupabase(mode, statusEl) {
         renderMode: mode === 'ia' ? iaRenderMode : null,
         theme: c.theme,
         slides: c.slides,
-        thumbnailB64
+        thumbnailB64,
+        agent1Output: mode === 'ia' ? iaAgent1Output : null,
+        agent2Output: mode === 'ia' ? iaAgent2Output : null
       })
     })
     if (!saveRes.ok) throw new Error(`HTTP ${saveRes.status}`)
@@ -1609,6 +1908,7 @@ async function saveCarouselToSupabase(mode, statusEl) {
     if (!saveData.ok) throw new Error(saveData.error)
 
     const { id: carouselId, signedUrls } = saveData
+    if (mode === 'ia') iaCarouselId = carouselId
 
     // 3. Renderizar y subir cada slide directamente a Supabase Storage
     const slideUrls = []
@@ -1696,6 +1996,7 @@ function renderHistGrid(carousels) {
           <div class="cc-title">${c.title}</div>
           <div class="cc-meta">${c.slide_count} slides · ${date}</div>
           <div class="cc-badge ${modeClass}">${modeLabel}</div>
+          ${c.rating ? `<div class="cc-rating">${'⭐'.repeat(c.rating)}</div>` : ''}
         </div>
       </div>`
   }).join('')
