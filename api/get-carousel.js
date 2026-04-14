@@ -22,12 +22,14 @@ module.exports = async function handler(req, res) {
     if (error) throw new Error(error.message)
     if (!carousel) return res.status(404).json({ error: 'Carrusel no encontrado' })
 
-    // Construir las URLs públicas de cada slide desde Storage
-    const slideUrls = []
-    for (let i = 1; i <= carousel.slide_count; i++) {
-      const path = `${id}/slide-${String(i).padStart(2, '0')}.png`
-      const { data } = supabase.storage.from('carousel-slides').getPublicUrl(path)
-      slideUrls.push(data.publicUrl)
+    // Usar slide_urls guardadas en DB, o construirlas desde Storage como fallback
+    let slideUrls = carousel.slide_urls || []
+    if (!slideUrls.length) {
+      for (let i = 1; i <= carousel.slide_count; i++) {
+        const path = `${id}/slide-${String(i).padStart(2, '0')}.jpg`
+        const { data } = supabase.storage.from('carousel-slides').getPublicUrl(path)
+        slideUrls.push(data.publicUrl)
+      }
     }
 
     res.json({ ok: true, carousel, slideUrls })

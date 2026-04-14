@@ -11,15 +11,15 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end()
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
-  const { title, mode, renderMode, theme, slides, slideImages } = req.body
-  if (!title || !mode || !slides || !slideImages?.length) {
+  const { title, mode, renderMode, theme, slides, thumbnailB64 } = req.body
+  if (!title || !mode || !slides) {
     return res.status(400).json({ error: 'Faltan campos requeridos' })
   }
 
   const supabase = getSupabase()
 
   try {
-    // 1. Crear el registro en la tabla (sin thumbnail todavía)
+    // 1. Crear el registro en la tabla
     const { data: record, error: dbError } = await supabase
       .from('carousels')
       .insert({
@@ -37,37 +37,35 @@ module.exports = async function handler(req, res) {
     if (dbError) throw new Error(dbError.message)
     const carouselId = record.id
 
-    // 2. Subir cada slide a Supabase Storage
-    const uploadedUrls = []
-    for (let i = 0; i < slideImages.length; i++) {
-      const buf = Buffer.from(slideImages[i], 'base64')
-      const path = `${carouselId}/slide-${String(i + 1).padStart(2, '0')}.png`
-
+    // 2. Subir el thumbnail si viene (es solo 1 imagen pequeña)
+    let thumbnailUrl = null
+    if (thumbnailB64) {
+      const buf = Buffer.from(thumbnailB64, 'base64')
+      const path = `${carouselId}/thumb.jpg`
       const { error: upError } = await supabase.storage
         .from('carousel-slides')
-        .upload(path, buf, { contentType: 'image/png', upsert: true })
+        .upload(path, buf, { contentType: 'image/jpeg', upsert: true })
 
-      if (upError) throw new Error(`Storage upload error: ${upError.message}`)
-
-      const { data: urlData } = supabase.storage
-        .from('carousel-slides')
-        .getPublicUrl(path)
-
-      uploadedUrls.push(urlData.publicUrl)
+      if (!upError) {
+        const { data: urlData } = supabase.storage.from('carousel-slides').getPublicUrl(path)
+        thumbnailUrl = urlData.publicUrl
+        await supabase.from('carousels').update({ thumbnail_url: thumbnailUrl }).eq('id', carouselId)
+      }
     }
 
-    // 3. Actualizar thumbnail_url con la URL del primer slide
-    await supabase
-      .from('carousels')
-      .update({ thumbnail_url: uploadedUrls[0] })
-      .eq('id', carouselId)
+    // 3. Generar URLs firmadas para que el cliente suba los slides directo
+    const signedUrls = []
+    for (let i = 0; i < slides.length; i++) {
+      const path = `${carouselId}/slide-${String(i + 1).padStart(2, '0')}.jpg`
+      const { data, error } = await supabase.storage
+        .from('carousel-slides')
+        .createSignedUploadUrl(path)
+      if (!error && data) {
+        signedUrls.push({ index: i, signedUrl: data.signedUrl, path, token: data.token })
+      }
+    }
 
-    res.json({
-      ok: true,
-      id: carouselId,
-      slideUrls: uploadedUrls,
-      thumbnailUrl: uploadedUrls[0]
-    })
+    res.json({ ok: true, id: carouselId, thumbnailUrl, signedUrls })
   } catch (err) {
     console.error('save-carousel error:', err)
     res.status(500).json({ error: err.message || 'Error guardando el carrusel' })

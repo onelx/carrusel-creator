@@ -1546,7 +1546,8 @@ async function downloadSlideIA(index) {
 // ── GUARDAR EN SUPABASE ───────────────────────────────────────
 // ══════════════════════════════════════════════════════════════
 
-async function renderSlideToPNG(index, mode) {
+// Renderiza un slide a canvas JPEG pequeño (para storage)
+async function renderSlideToJpeg(index, mode, width = 540, height = 675) {
   const c = mode === 'ia' ? iaCarouselData : carouselData
   const container = document.createElement('div')
   container.style.cssText = 'position:fixed;left:-9999px;top:0;width:1080px;height:1350px;overflow:hidden;z-index:-1'
@@ -1560,13 +1561,18 @@ async function renderSlideToPNG(index, mode) {
   }
 
   document.body.appendChild(container)
-  await new Promise(r => setTimeout(r, 300))
+  await new Promise(r => setTimeout(r, 200))
+
+  // Render full size then scale down
   const canvas = await html2canvas(container, {
-    width:1080, height:1350, scale:1, useCORS:true, allowTaint:true,
-    backgroundColor: c.theme.bg_fallback || '#0d0d0d'
+    width: 1080, height: 1350, scale: 0.5,
+    useCORS: true, allowTaint: true,
+    backgroundColor: c.theme?.bg_fallback || '#0d0d0d'
   })
   document.body.removeChild(container)
-  return canvas.toDataURL('image/png').split(',')[1]
+
+  // Export as JPEG at 80% quality (~50-100KB per slide)
+  return canvas.toDataURL('image/jpeg', 0.80).split(',')[1]
 }
 
 async function saveCarouselToSupabase(mode, statusEl) {
@@ -1582,13 +1588,11 @@ async function saveCarouselToSupabase(mode, statusEl) {
   setStatus('saving', '⏳ Guardando...')
 
   try {
-    // Renderizar cada slide a PNG
-    const slideImages = []
-    for (let i = 0; i < c.slides.length; i++) {
-      slideImages.push(await renderSlideToPNG(i, mode))
-    }
+    // 1. Renderizar thumbnail (solo slide 0, pequeño)
+    const thumbnailB64 = await renderSlideToJpeg(0, mode)
 
-    const res = await fetch(`${API}/api/save-carousel`, {
+    // 2. Crear registro en DB + obtener URLs firmadas para subir slides
+    const saveRes = await fetch(`${API}/api/save-carousel`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1597,18 +1601,44 @@ async function saveCarouselToSupabase(mode, statusEl) {
         renderMode: mode === 'ia' ? iaRenderMode : null,
         theme: c.theme,
         slides: c.slides,
-        slideImages
+        thumbnailB64
       })
     })
+    if (!saveRes.ok) throw new Error(`HTTP ${saveRes.status}`)
+    const saveData = await saveRes.json()
+    if (!saveData.ok) throw new Error(saveData.error)
 
-    const data = await res.json()
-    if (!data.ok) throw new Error(data.error)
+    const { id: carouselId, signedUrls } = saveData
+
+    // 3. Renderizar y subir cada slide directamente a Supabase Storage
+    const slideUrls = []
+    for (const { index, signedUrl } of signedUrls) {
+      const jpegB64 = await renderSlideToJpeg(index, mode)
+      const bytes = Uint8Array.from(atob(jpegB64), ch => ch.charCodeAt(0))
+
+      await fetch(signedUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'image/jpeg' },
+        body: bytes
+      })
+
+      // URL pública del slide (reemplazar el path firmado por la URL pública)
+      const publicUrl = `${saveData.signedUrls[index]?.signedUrl?.split('?')[0]?.replace('/object/upload/', '/object/public/')}`
+      slideUrls.push(publicUrl)
+    }
+
+    // 4. Confirmar URLs en la DB
+    await fetch(`${API}/api/confirm-carousel`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: carouselId, slideUrls, thumbnailUrl: saveData.thumbnailUrl })
+    })
 
     setStatus('saved', '✓ Guardado en historial')
     setTimeout(() => setStatus('', ''), 3500)
   } catch (err) {
     console.error('Save error:', err)
-    setStatus('error', '✕ Error al guardar')
+    setStatus('error', '✕ ' + (err.message || 'Error al guardar'))
     setTimeout(() => setStatus('', ''), 4000)
   }
 }
