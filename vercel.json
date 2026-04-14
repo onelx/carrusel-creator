@@ -4,6 +4,11 @@
     { "src": "api/*.js", "use": "@vercel/node" },
     { "src": "*.html",  "use": "@vercel/static" }
   ],
+  "functions": {
+    "api/generate-carousel-ia.js": { "maxDuration": 60 },
+    "api/generate-carousel.js":    { "maxDuration": 60 },
+    "api/save-carousel.js":        { "maxDuration": 30 }
+  },
   "routes": [
     { "src": "/api/generate-carousel",    "dest": "/api/generate-carousel.js" },
     { "src": "/api/generate-carousel-ia", "dest": "/api/generate-carousel-ia.js" },

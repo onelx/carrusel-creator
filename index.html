@@ -1554,10 +1554,16 @@ async function generateIA() {
     })
     if (!agentRes.ok) {
       let msg = `Error ${agentRes.status}`
-      try { msg = (await agentRes.json()).error || msg } catch {}
+      try {
+        const body = await agentRes.json()
+        msg = typeof body.error === 'string' ? body.error : (body.error?.message || body.message || msg)
+      } catch {}
       throw new Error(msg)
     }
     const agentData = await agentRes.json()
+    if (!agentData.ok || !agentData.carousel) throw new Error(
+      typeof agentData.error === 'string' ? agentData.error : 'Los agentes no devolvieron un carrusel válido'
+    )
     iaCarouselData  = agentData.carousel
     iaAgent1Output  = agentData.agent1Output
     iaAgent2Output  = agentData.agent2Output
@@ -1905,7 +1911,7 @@ async function saveCarouselToSupabase(mode, statusEl) {
     })
     if (!saveRes.ok) throw new Error(`HTTP ${saveRes.status}`)
     const saveData = await saveRes.json()
-    if (!saveData.ok) throw new Error(saveData.error)
+    if (!saveData.ok) throw new Error(typeof saveData.error === 'string' ? saveData.error : JSON.stringify(saveData.error))
 
     const { id: carouselId, signedUrls } = saveData
     if (mode === 'ia') iaCarouselId = carouselId

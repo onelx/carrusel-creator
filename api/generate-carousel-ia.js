@@ -242,7 +242,7 @@ ${styleImages?.length ? `IMÁGENES DE REFERENCIA VISUAL (${styleImages.length} f
   contentParts.push({ type: 'text', text: 'Ejecutá el carrusel completo siguiendo el concepto del Director.' })
 
   const msg = await client.messages.create({
-    model: 'claude-opus-4-5',
+    model: 'claude-sonnet-4-5',
     max_tokens: 3500,
     system: EJECUTOR_SYSTEM,
     messages: [{ role: 'user', content: contentParts }]
@@ -307,6 +307,7 @@ module.exports = async function handler(req, res) {
 
   } catch (err) {
     console.error('generate-carousel-ia error:', err)
-    res.status(500).json({ error: err.message || 'Error generando el carrusel' })
+    const msg = typeof err === 'string' ? err : (err?.message || JSON.stringify(err) || 'Error generando el carrusel')
+    res.status(500).json({ error: msg })
   }
 }
