@@ -1598,17 +1598,27 @@ async function generateIA() {
     await new Promise(r => setTimeout(r, 300))
 
     iaCurrentSlide = 0
+    console.log('→ iaRenderResult')
     iaRenderResult()
+    console.log('→ renderAgentEvals', iaAgent1Output, iaAgent2Output)
     renderAgentEvals(iaAgent1Output, iaAgent2Output)
+    console.log('→ stars section')
     document.getElementById('ia-stars-section').style.display = 'flex'
     showIAPhase('result')
     saveCarouselToSupabase('ia', document.getElementById('ia-save-status'))
 
   } catch (err) {
-    console.error(err)
+    console.error('generateIA catch:', err)
+    console.error('err type:', typeof err)
+    console.error('err.message:', err?.message)
+    console.error('err.name:', err?.name)
+    console.error('JSON:', JSON.stringify(err))
     showIAPhase('upload')
     const el = document.getElementById('ia-error')
-    el.textContent = 'Error: ' + err.message; el.style.display = 'block'
+    const msg = err instanceof Error
+      ? `${err.name}: ${err.message}`
+      : (typeof err === 'string' ? err : JSON.stringify(err))
+    el.textContent = msg; el.style.display = 'block'
   }
 }
 
