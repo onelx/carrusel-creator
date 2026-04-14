@@ -26,9 +26,11 @@ module.exports = async function handler(req, res) {
 
     if (upError) throw new Error(upError.message)
 
-    const { data: urlData } = supabase.storage.from('carousel-slides').getPublicUrl(path)
+    // Construir el URL manualmente para evitar bug del cliente Supabase
+    // que a veces genera /public/sign/bucket en lugar de /public/bucket
+    const publicUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/carousel-slides/${path}`
 
-    res.json({ ok: true, index, url: urlData.publicUrl })
+    res.json({ ok: true, index, url: publicUrl })
   } catch (err) {
     console.error('upload-slide error:', err)
     res.status(500).json({ error: err.message || 'Error subiendo el slide' })

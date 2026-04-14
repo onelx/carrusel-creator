@@ -22,13 +22,27 @@ module.exports = async function handler(req, res) {
     if (error) throw new Error(error.message)
     if (!carousel) return res.status(404).json({ error: 'Carrusel no encontrado' })
 
+    // Construir URL público correcto a partir de un path relativo
+    const makePublicUrl = (path) =>
+      `${process.env.SUPABASE_URL}/storage/v1/object/public/carousel-slides/${path}`
+
+    // Limpiar URLs rotos (que contienen /public/sign/ por bug del cliente Supabase)
+    const fixUrl = (url) => {
+      if (!url) return url
+      return url.replace(/\/storage\/v1\/object\/public\/sign\/carousel-slides\//, '/storage/v1/object/public/carousel-slides/')
+    }
+
     // Usar slide_urls guardadas en DB, o construirlas desde Storage como fallback
-    let slideUrls = carousel.slide_urls || []
+    let slideUrls = (carousel.slide_urls || []).map(fixUrl)
     if (!slideUrls.length) {
+      // Intentar con .png primero (carruseles IA nuevos), luego .jpg
       for (let i = 1; i <= carousel.slide_count; i++) {
-        const path = `${id}/slide-${String(i).padStart(2, '0')}.jpg`
-        const { data } = supabase.storage.from('carousel-slides').getPublicUrl(path)
-        slideUrls.push(data.publicUrl)
+        const num = String(i).padStart(2, '0')
+        const pathPng = `${id}/slide-${num}.png`
+        const pathJpg = `${id}/slide-${num}.jpg`
+        // Supabase getPublicUrl no valida si el archivo existe, usamos .png como preferencia para IA
+        const ext = carousel.mode === 'ia' ? 'png' : 'jpg'
+        slideUrls.push(makePublicUrl(`${id}/slide-${num}.${ext}`))
       }
     }
 
