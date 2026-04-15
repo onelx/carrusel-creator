@@ -192,6 +192,49 @@
       line-height: 1.6; white-space: pre-wrap; font-family: inherit;
     }
 
+    /* Color reference section */
+    .color-ref-section {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-top: 16px;
+    }
+    .color-ref-header {
+      display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;
+    }
+    .color-ref-header span { font-size: 22px; margin-top: 2px; }
+    .color-ref-title { font-weight: 600; font-size: 14px; color: var(--text); }
+    .color-ref-badge {
+      display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .05em;
+      background: var(--surface2); color: var(--text-muted); border-radius: 4px;
+      padding: 2px 6px; margin-left: 8px; vertical-align: middle;
+    }
+    .color-ref-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .color-ref-body {}
+    .dz-color { padding: 18px 16px; }
+    .dz-color h3 { font-size: 13px; }
+    .color-ref-preview {
+      display: flex; align-items: center; gap: 14px;
+      padding: 10px 14px; background: var(--surface2); border-radius: 10px;
+    }
+    .color-ref-preview img {
+      width: 72px; height: 72px; object-fit: cover; border-radius: 8px;
+      border: 2px solid var(--border); flex-shrink: 0;
+    }
+    .color-ref-info { flex: 1; min-width: 0; }
+    .color-ref-fname { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .color-ref-remove {
+      background: none; border: 1px solid var(--border); color: var(--text-muted);
+      padding: 4px 10px; border-radius: 6px; font-size: 12px; cursor: pointer;
+    }
+    .color-ref-remove:hover { color: var(--text); border-color: var(--text-muted); }
+    .color-style-json {
+      margin-top: 10px; font-size: 11px; color: var(--accent);
+      background: rgba(201,168,76,0.08); border-radius: 6px; padding: 8px 10px;
+      font-family: monospace; white-space: pre-wrap; word-break: break-all;
+    }
+
     /* Image grid */
     .img-grid {
       display: none;
@@ -768,6 +811,33 @@
 
         </div>
 
+        <!-- COLOR REFERENCE -->
+        <div class="color-ref-section">
+          <div class="color-ref-header">
+            <span>🎨</span>
+            <div>
+              <div class="color-ref-title">Referencia de color <span class="color-ref-badge">OPCIONAL</span></div>
+              <div class="color-ref-desc">Claude extrae la paleta y estilo visual · Gemini la aplica a todas las imágenes</div>
+            </div>
+          </div>
+          <div class="color-ref-body">
+            <div class="dz dz-color" id="color-dropzone">
+              <input type="file" id="color-input" accept="image/jpeg,image/png,image/webp" />
+              <div class="dz-icon" style="font-size:28px">🎨</div>
+              <h3>Subí tu imagen de referencia</h3>
+              <p>La paleta y mood se aplicarán a todos los slides</p>
+            </div>
+            <div class="color-ref-preview" id="color-ref-preview" style="display:none">
+              <img id="color-ref-img" />
+              <div class="color-ref-info">
+                <div id="color-ref-name" class="color-ref-fname"></div>
+                <button class="color-ref-remove" onclick="removeColorRef()">✕ quitar</button>
+              </div>
+              <div id="color-style-json" class="color-style-json" style="display:none"></div>
+            </div>
+          </div>
+        </div>
+
         <div class="err-box" id="upload-error"></div>
 
         <button class="btn-generate" id="btn-generate" onclick="generateCarousel()" disabled>
@@ -1115,6 +1185,8 @@ const API = window.location.hostname === 'localhost' ? 'http://localhost:5175' :
 // ── State ─────────────────────────────────────────────────────
 let textContent = ''
 let uploadedImages = []
+let colorRefImage = null   // { dataUrl, b64, mimeType, name }
+let colorStyle = null      // JSON extraído por Claude de la imagen de referencia
 let carouselData = null
 let currentSlide = 0
 
@@ -1223,6 +1295,51 @@ function updateGenerateBtn() {
   document.getElementById('btn-generate').disabled = !(textContent.trim() && uploadedImages.length >= 2)
 }
 
+// ── Color reference image ─────────────────────────────────────
+;(function initColorRef() {
+  const dz = document.getElementById('color-dropzone')
+  const input = document.getElementById('color-input')
+
+  dz.addEventListener('click', () => input.click())
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over') })
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'))
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('drag-over')
+    const file = e.dataTransfer.files[0]
+    if (file) loadColorRef(file)
+  })
+  input.addEventListener('change', e => {
+    if (e.target.files[0]) loadColorRef(e.target.files[0])
+  })
+})()
+
+async function loadColorRef(file) {
+  if (!file.type.startsWith('image/')) return
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    const dataUrl = e.target.result
+    const b64 = dataUrl.split(',')[1]
+    colorRefImage = { dataUrl, b64, mimeType: file.type, name: file.name }
+    colorStyle = null
+    document.getElementById('color-dropzone').style.display = 'none'
+    const preview = document.getElementById('color-ref-preview')
+    preview.style.display = 'flex'
+    document.getElementById('color-ref-img').src = dataUrl
+    document.getElementById('color-ref-name').textContent = file.name
+    document.getElementById('color-style-json').style.display = 'none'
+  }
+  reader.readAsDataURL(file)
+}
+
+function removeColorRef() {
+  colorRefImage = null
+  colorStyle = null
+  document.getElementById('color-dropzone').style.display = ''
+  document.getElementById('color-ref-preview').style.display = 'none'
+  document.getElementById('color-style-json').style.display = 'none'
+  document.getElementById('color-input').value = ''
+}
+
 // ── Generate ─────────────────────────────────────────────────
 async function generateCarousel() {
   if (!textContent.trim() || !uploadedImages.length) return
@@ -1231,6 +1348,7 @@ async function generateCarousel() {
   document.getElementById('upload-error').style.display = 'none'
 
   try {
+    // 1. Claude genera el JSON del carrusel (selección de imágenes)
     const res = await fetch(`${API}/api/generate-carousel`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1243,6 +1361,53 @@ async function generateCarousel() {
     }
     const data = await res.json()
     carouselData = data.carousel
+
+    // 2. Si hay imagen de referencia de color → aplicar color transfer
+    if (colorRefImage) {
+      setLoadingText('🎨 Analizando estilo de color...')
+
+      // 2a. Claude analiza la referencia y extrae el JSON de estilo
+      const styleRes = await fetch(`${API}/api/analyze-style`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageB64: colorRefImage.b64, mimeType: colorRefImage.mimeType })
+      })
+      const styleData = await styleRes.json()
+      if (!styleData.ok) throw new Error(styleData.error || 'Error analizando referencia de color')
+      colorStyle = styleData.style
+
+      // Mostrar el JSON extraído en la UI
+      const jsonEl = document.getElementById('color-style-json')
+      jsonEl.textContent = `mood: ${colorStyle.mood}\nstyle: ${colorStyle.color_style?.grade}\npaleta: ${colorStyle.palette?.join(' ')}`
+      jsonEl.style.display = 'block'
+
+      // 2b. Gemini genera versión estilizada de cada imagen del carrusel en paralelo
+      setLoadingText('🖼 Aplicando estilo a las imágenes...')
+      const styledImages = await Promise.all(carouselData.slides.map(async (slide) => {
+        const img = uploadedImages[slide.image_index]
+        if (!img) return null
+        try {
+          const r = await fetch(`${API}/api/generate-styled-slide`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contentImageB64: img.b64,
+              contentMimeType: img.file?.type || 'image/jpeg',
+              style: colorStyle,
+              slideContext: slide.content?.titulo || ''
+            })
+          })
+          const d = await r.json()
+          return d.ok ? `data:${d.mimeType};base64,${d.image}` : img.dataUrl
+        } catch { return img.dataUrl }
+      }))
+
+      // Guardar las imágenes estilizadas para usarlas en el render
+      window._styledSlideImages = styledImages
+    } else {
+      window._styledSlideImages = null
+    }
+
     currentSlide = 0
     renderResult()
     showFotosPhase('result')
@@ -1252,6 +1417,11 @@ async function generateCarousel() {
     const el = document.getElementById('upload-error')
     el.textContent = 'Error: ' + err.message; el.style.display = 'block'
   }
+}
+
+function setLoadingText(text) {
+  const el = document.querySelector('#fotos-loading .loading-title')
+  if (el) el.textContent = text
 }
 
 let loadingInterval = null
@@ -1290,9 +1460,11 @@ function renderResult() {
     `<div class="dot ${i===0?'active':''}" onclick="goTo(${i})"></div>`).join('')
 
   document.getElementById('thumbnails').innerHTML = c.slides.map((slide, i) => {
+    const styled = window._styledSlideImages?.[i]
     const img = uploadedImages[slide.image_index]
+    const src = styled || img?.dataUrl
     return `<div class="thumb-nav ${i===0?'active':''}" onclick="goTo(${i})">
-      ${img ? `<img src="${img.dataUrl}" />` : '<div style="background:var(--surface2);width:100%;height:100%"></div>'}
+      ${src ? `<img src="${src}" />` : '<div style="background:var(--surface2);width:100%;height:100%"></div>'}
       <div class="tn-num">${i+1}</div>
     </div>`
   }).join('')
@@ -1323,9 +1495,10 @@ document.addEventListener('keydown', e => {
 })
 
 // ── Build slide HTML ──────────────────────────────────────────
-function buildSlideHTML(slide, theme, num, total) {
+function buildSlideHTML(slide, theme, num, total, overrideImageUrl) {
   const img = uploadedImages[slide.image_index]
-  const imgStyle = img ? `background-image: url('${img.dataUrl}')` : `background: ${theme.bg_fallback || '#0d0d0d'}`
+  const imageUrl = overrideImageUrl || (window._styledSlideImages?.[num - 1]) || img?.dataUrl
+  const imgStyle = imageUrl ? `background-image: url('${imageUrl}')` : `background: ${theme.bg_fallback || '#0d0d0d'}`
   const overlay = slide.overlay || {}
   const design  = slide.design  || {}
   const content = slide.content || {}
