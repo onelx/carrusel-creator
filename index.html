@@ -378,25 +378,15 @@
       font-weight: 900; line-height: 1.05;
       color: var(--slide-text, #fff); margin-bottom: 20px;
     }
-    .size-xl .titulo { font-size: 108px; }
-    .size-lg .titulo { font-size: 82px; }
-    .size-md .titulo { font-size: 64px; }
-    .size-sm .titulo { font-size: 52px; }
     .ig-slide .subtitulo {
       font-weight: 400; line-height: 1.4;
       color: var(--slide-text, #fff); opacity: 0.85;
       margin-bottom: 16px; max-width: 900px;
     }
-    .sub-sm .subtitulo { font-size: 28px; }
-    .sub-md .subtitulo { font-size: 36px; }
-    .sub-lg .subtitulo { font-size: 46px; }
     .ig-slide .cuerpo {
       font-weight: 300; line-height: 1.6;
       color: var(--slide-text, #fff); opacity: 0.75; max-width: 900px;
     }
-    .body-sm .cuerpo { font-size: 22px; }
-    .body-md .cuerpo { font-size: 28px; }
-    .body-lg .cuerpo { font-size: 36px; }
     .ig-slide .cta-text {
       display: inline-block; font-size: 28px; font-weight: 700;
       color: var(--slide-accent, #f5c518); margin-top: 20px;
@@ -474,14 +464,13 @@
       font-size: 0.6rem; font-weight: 700; color: var(--muted2);
       text-transform: uppercase; letter-spacing: 0.06em; margin-right: 2px;
     }
-    .size-btn {
-      min-width: 26px; padding: 4px 8px; border: 1px solid var(--border);
-      border-radius: 6px; background: var(--surface2); color: var(--muted2);
-      font-family: inherit; font-size: 0.65rem; font-weight: 700;
-      cursor: pointer; transition: all 0.15s;
+    .size-input {
+      width: 52px; padding: 4px 6px; border: 1px solid var(--border);
+      border-radius: 6px; background: var(--surface2); color: var(--text);
+      font-family: inherit; font-size: 0.7rem; font-weight: 700; text-align: center;
     }
-    .size-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-    .size-btn:not(.active):hover { color: var(--text); background: rgba(255,255,255,0.06); }
+    .size-input:focus { outline: none; border-color: var(--accent); }
+    .size-unit { font-size: 0.6rem; color: var(--muted2); margin-right: 4px; }
 
     /* ══ IA STYLE IMAGE UPLOAD ══ */
     .ia-style-dz {
@@ -536,24 +525,14 @@
       font-weight: 900; line-height: 1.05; color: var(--slide-text, #fff);
       margin-bottom: 24px;
     }
-    .edit-inner .titulo.sz-xl { font-size: 80px; }
-    .edit-inner .titulo.sz-lg { font-size: 62px; }
-    .edit-inner .titulo.sz-md { font-size: 48px; }
-    .edit-inner .titulo.sz-sm { font-size: 38px; }
     .edit-inner .subtitulo {
       font-weight: 400; line-height: 1.5;
       color: var(--slide-text, #fff); opacity: 0.85; margin-bottom: 16px;
     }
-    .edit-inner .subtitulo.sz-sm { font-size: 22px; }
-    .edit-inner .subtitulo.sz-md { font-size: 28px; }
-    .edit-inner .subtitulo.sz-lg { font-size: 36px; }
     .edit-inner .cuerpo {
       font-weight: 300; line-height: 1.7;
       color: var(--slide-text, #fff); opacity: 0.7;
     }
-    .edit-inner .cuerpo.sz-sm { font-size: 18px; }
-    .edit-inner .cuerpo.sz-md { font-size: 22px; }
-    .edit-inner .cuerpo.sz-lg { font-size: 30px; }
     .edit-inner .cta-text {
       display: inline-block; font-size: 22px; font-weight: 700;
       color: var(--slide-accent, #f5c518); margin-top: 28px;
@@ -915,23 +894,18 @@
         <div class="size-toolbar">
           <div class="size-group">
             <span class="size-label">Título</span>
-            <button class="size-btn active" data-field="titulo" data-value="auto" onclick="setTextSize('titulo','auto')">Auto</button>
-            <button class="size-btn" data-field="titulo" data-value="sm" onclick="setTextSize('titulo','sm')">S</button>
-            <button class="size-btn" data-field="titulo" data-value="md" onclick="setTextSize('titulo','md')">M</button>
-            <button class="size-btn" data-field="titulo" data-value="lg" onclick="setTextSize('titulo','lg')">L</button>
-            <button class="size-btn" data-field="titulo" data-value="xl" onclick="setTextSize('titulo','xl')">XL</button>
+            <input type="number" class="size-input" data-field="titulo" value="82" min="20" max="160" step="1" oninput="setTextSize('titulo', this.value)">
+            <span class="size-unit">px</span>
           </div>
           <div class="size-group">
             <span class="size-label">Subtítulo</span>
-            <button class="size-btn" data-field="sub" data-value="sm" onclick="setTextSize('sub','sm')">S</button>
-            <button class="size-btn active" data-field="sub" data-value="md" onclick="setTextSize('sub','md')">M</button>
-            <button class="size-btn" data-field="sub" data-value="lg" onclick="setTextSize('sub','lg')">L</button>
+            <input type="number" class="size-input" data-field="sub" value="36" min="12" max="100" step="1" oninput="setTextSize('sub', this.value)">
+            <span class="size-unit">px</span>
           </div>
           <div class="size-group">
             <span class="size-label">Cuerpo</span>
-            <button class="size-btn" data-field="body" data-value="sm" onclick="setTextSize('body','sm')">S</button>
-            <button class="size-btn active" data-field="body" data-value="md" onclick="setTextSize('body','md')">M</button>
-            <button class="size-btn" data-field="body" data-value="lg" onclick="setTextSize('body','lg')">L</button>
+            <input type="number" class="size-input" data-field="body" value="28" min="10" max="100" step="1" oninput="setTextSize('body', this.value)">
+            <span class="size-unit">px</span>
           </div>
         </div>
 
@@ -1133,23 +1107,18 @@
         <div class="size-toolbar">
           <div class="size-group">
             <span class="size-label">Título</span>
-            <button class="size-btn active" data-field="titulo" data-value="auto" onclick="setTextSize('titulo','auto')">Auto</button>
-            <button class="size-btn" data-field="titulo" data-value="sm" onclick="setTextSize('titulo','sm')">S</button>
-            <button class="size-btn" data-field="titulo" data-value="md" onclick="setTextSize('titulo','md')">M</button>
-            <button class="size-btn" data-field="titulo" data-value="lg" onclick="setTextSize('titulo','lg')">L</button>
-            <button class="size-btn" data-field="titulo" data-value="xl" onclick="setTextSize('titulo','xl')">XL</button>
+            <input type="number" class="size-input" data-field="titulo" value="82" min="20" max="160" step="1" oninput="setTextSize('titulo', this.value)">
+            <span class="size-unit">px</span>
           </div>
           <div class="size-group">
             <span class="size-label">Subtítulo</span>
-            <button class="size-btn" data-field="sub" data-value="sm" onclick="setTextSize('sub','sm')">S</button>
-            <button class="size-btn active" data-field="sub" data-value="md" onclick="setTextSize('sub','md')">M</button>
-            <button class="size-btn" data-field="sub" data-value="lg" onclick="setTextSize('sub','lg')">L</button>
+            <input type="number" class="size-input" data-field="sub" value="36" min="12" max="100" step="1" oninput="setTextSize('sub', this.value)">
+            <span class="size-unit">px</span>
           </div>
           <div class="size-group">
             <span class="size-label">Cuerpo</span>
-            <button class="size-btn" data-field="body" data-value="sm" onclick="setTextSize('body','sm')">S</button>
-            <button class="size-btn active" data-field="body" data-value="md" onclick="setTextSize('body','md')">M</button>
-            <button class="size-btn" data-field="body" data-value="lg" onclick="setTextSize('body','lg')">L</button>
+            <input type="number" class="size-input" data-field="body" value="28" min="10" max="100" step="1" oninput="setTextSize('body', this.value)">
+            <span class="size-unit">px</span>
           </div>
         </div>
 
@@ -1271,14 +1240,16 @@ let carouselData = null
 let currentSlide = 0
 
 // ── Text size control (shared across "Desde fotos" y "Con IA") ─
-// titulo: 'auto' usa el title_size que sugiere la IA por slide; sub/body van fijos.
-let textSize = { titulo: 'auto', sub: 'md', body: 'md' }
+// Valores en px, tal cual se aplican al modo Fondo (1080px). El modo
+// Editorial los escala (panel más angosto) — ver EDITORIAL_SCALE.
+let textSize = { titulo: 82, sub: 36, body: 28 }
+const EDITORIAL_SCALE = 0.75
 
 function setTextSize(field, value) {
-  textSize[field] = value
-  document.querySelectorAll(`.size-btn[data-field="${field}"]`).forEach(b => {
-    b.classList.toggle('active', b.dataset.value === value)
-  })
+  const n = parseInt(value, 10)
+  if (!n || n < 1) return
+  textSize[field] = n
+  document.querySelectorAll(`.size-input[data-field="${field}"]`).forEach(inp => { inp.value = n })
   if (carouselData) goTo(currentSlide)
   if (iaCarouselData) iaGoTo(iaCurrentSlide)
 }
@@ -1598,21 +1569,18 @@ function buildSlideHTML(slide, theme, num, total, overrideImageUrl) {
   const fontClass  = `font-${theme.font_style || 'modern'}`
   const posClass   = `pos-${design.text_position || 'bottom'}`
   const alignClass = `align-${design.text_align || 'left'}`
-  const sizeClass  = `size-${textSize.titulo === 'auto' ? (design.title_size || 'lg') : textSize.titulo}`
-  const subSizeClass  = `sub-${textSize.sub}`
-  const bodySizeClass = `body-${textSize.body}`
   const accent = design.accent_color || theme.accent_color || '#f5c518'
   const txtCol = design.text_color || '#ffffff'
 
-  return `<div class="ig-slide ${fontClass} ${posClass} ${alignClass} ${sizeClass} ${subSizeClass} ${bodySizeClass}"
+  return `<div class="ig-slide ${fontClass} ${posClass} ${alignClass}"
        style="--slide-accent:${accent};--slide-text:${txtCol};background:${theme.bg_fallback||'#0d0d0d'}">
     <div class="slide-bg" style="${imgStyle}"></div>
     <div class="slide-overlay" style="${buildOverlay(overlay)}"></div>
     <div class="slide-content">
       ${content.badge    ? `<div class="badge">${content.badge}</div>` : ''}
-      ${content.titulo   ? `<h1 class="titulo">${content.titulo}</h1>` : ''}
-      ${content.subtitulo? `<p class="subtitulo">${content.subtitulo}</p>` : ''}
-      ${content.cuerpo   ? `<p class="cuerpo">${content.cuerpo}</p>` : ''}
+      ${content.titulo   ? `<h1 class="titulo" style="font-size:${textSize.titulo}px">${content.titulo}</h1>` : ''}
+      ${content.subtitulo? `<p class="subtitulo" style="font-size:${textSize.sub}px">${content.subtitulo}</p>` : ''}
+      ${content.cuerpo   ? `<p class="cuerpo" style="font-size:${textSize.body}px">${content.cuerpo}</p>` : ''}
       ${content.cta      ? `<span class="cta-text">${content.cta}</span>` : ''}
     </div>
     <div class="slide-num-indicator">${num} / ${total}</div>
@@ -1950,21 +1918,18 @@ function buildSlideIAFondo(slide, theme, num, total, imageUrl) {
   const fontClass  = `font-${theme.font_style || 'modern'}`
   const posClass   = `pos-${design.text_position || 'bottom'}`
   const alignClass = `align-${design.text_align || 'left'}`
-  const sizeClass  = `size-${textSize.titulo === 'auto' ? (design.title_size || 'lg') : textSize.titulo}`
-  const subSizeClass  = `sub-${textSize.sub}`
-  const bodySizeClass = `body-${textSize.body}`
   const accent = design.accent_color || theme.accent_color || '#f5c518'
   const txtCol = design.text_color || '#ffffff'
 
-  return `<div class="ig-slide ${fontClass} ${posClass} ${alignClass} ${sizeClass} ${subSizeClass} ${bodySizeClass}"
+  return `<div class="ig-slide ${fontClass} ${posClass} ${alignClass}"
        style="--slide-accent:${accent};--slide-text:${txtCol};background:${theme.bg_fallback||'#0d0d0d'}">
     <div class="slide-bg" style="${imgStyle}"></div>
     <div class="slide-overlay" style="${buildOverlay(overlay)}"></div>
     <div class="slide-content">
       ${content.badge    ? `<div class="badge">${content.badge}</div>` : ''}
-      ${content.titulo   ? `<h1 class="titulo">${content.titulo}</h1>` : ''}
-      ${content.subtitulo? `<p class="subtitulo">${content.subtitulo}</p>` : ''}
-      ${content.cuerpo   ? `<p class="cuerpo">${content.cuerpo}</p>` : ''}
+      ${content.titulo   ? `<h1 class="titulo" style="font-size:${textSize.titulo}px">${content.titulo}</h1>` : ''}
+      ${content.subtitulo? `<p class="subtitulo" style="font-size:${textSize.sub}px">${content.subtitulo}</p>` : ''}
+      ${content.cuerpo   ? `<p class="cuerpo" style="font-size:${textSize.body}px">${content.cuerpo}</p>` : ''}
       ${content.cta      ? `<span class="cta-text">${content.cta}</span>` : ''}
     </div>
     <div class="slide-num-indicator">${num} / ${total}</div>
@@ -1979,10 +1944,9 @@ function buildSlideEditorial(slide, theme, num, total, imageUrl) {
   const txtCol  = design.text_color  || '#ffffff'
   const bg      = theme.bg_fallback  || '#0d0d0d'
   const fontClass = `edit-font-${theme.font_style || 'modern'}`
-  const szMap = { xl: 'sz-xl', lg: 'sz-lg', md: 'sz-md', sm: 'sz-sm' }
-  const sz     = szMap[textSize.titulo === 'auto' ? design.title_size : textSize.titulo] || 'sz-lg'
-  const subSz  = szMap[textSize.sub]  || 'sz-md'
-  const bodySz = szMap[textSize.body] || 'sz-md'
+  const titleSz = Math.round(textSize.titulo * EDITORIAL_SCALE)
+  const subSz   = Math.round(textSize.sub    * EDITORIAL_SCALE)
+  const bodySz  = Math.round(textSize.body   * EDITORIAL_SCALE)
   const imgBg = imageUrl ? `background-image:url('${imageUrl}')` : `background:${bg}`
 
   return `<div class="ig-slide-editorial ${fontClass}"
@@ -1991,9 +1955,9 @@ function buildSlideEditorial(slide, theme, num, total, imageUrl) {
     <div class="edit-panel" style="background:${bg}">
       <div class="edit-inner">
         ${content.badge    ? `<div class="badge">${content.badge}</div>` : ''}
-        ${content.titulo   ? `<h1 class="titulo ${sz}">${content.titulo}</h1>` : ''}
-        ${content.subtitulo? `<p class="subtitulo ${subSz}">${content.subtitulo}</p>` : ''}
-        ${content.cuerpo   ? `<p class="cuerpo ${bodySz}">${content.cuerpo}</p>` : ''}
+        ${content.titulo   ? `<h1 class="titulo" style="font-size:${titleSz}px">${content.titulo}</h1>` : ''}
+        ${content.subtitulo? `<p class="subtitulo" style="font-size:${subSz}px">${content.subtitulo}</p>` : ''}
+        ${content.cuerpo   ? `<p class="cuerpo" style="font-size:${bodySz}px">${content.cuerpo}</p>` : ''}
         ${content.cta      ? `<span class="cta-text">${content.cta}</span>` : ''}
       </div>
     </div>
