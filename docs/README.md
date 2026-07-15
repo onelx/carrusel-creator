@@ -24,5 +24,5 @@ Documentación viva del proyecto. Se actualiza a medida que se toman decisiones.
 | 2026-07-14 | Etapa 1 del Copiloto implementada y verificada en local (ver [spec](05-spec-etapa1-copiloto.md)) | ✅ Hecho |
 | 2026-07-14 | Migración Supabase aplicada: modo `copiloto` + columnas `brief`, `conversation`, `rating_reasons`, `caption` | ✅ Hecho |
 | — | Completar `ANTHROPIC_API_KEY` y `GEMINI_API_KEY` en el `.env` local (hoy vacías; en Vercel ya están) y probar el agente real | ⏳ Pendiente (Osvaldo) |
-| — | Deploy a Vercel y prueba en producción | ⏳ Pendiente |
+| 2026-07-14 | Deploy a producción (commit `a14f6fb`) — endpoint `/api/copilot` verificado con el agente real: esqueleto de 6 slides, 3 portadas, interpretación completa | ✅ Hecho |
 | 2026-07-14 | Quick wins incluidos en la Etapa 1: variantes de portada y caption+hashtags (backlog #1 y #2) | ✅ Acordado |

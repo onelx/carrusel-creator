@@ -1,6 +1,6 @@
 # Spec de implementación — Etapa 1 del Copiloto
 
-> Estado: **implementado y verificado** (2026-07-14). Pendiente: prueba end-to-end con agente real (las keys `ANTHROPIC_API_KEY` y `GEMINI_API_KEY` están vacías en el `.env` local — solo configuradas en Vercel; completarlas para probar localmente) y deploy.
+> Estado: **implementado, verificado y en producción** (2026-07-14, commit `a14f6fb`). El endpoint `/api/copilot` fue probado en producción con el agente real: con un brief completo no hace preguntas y propone directamente un esqueleto válido (6 slides, 3 portadas con enfoques distintos, interpretación completa). Pendiente menor: completar `ANTHROPIC_API_KEY` y `GEMINI_API_KEY` en el `.env` local para poder probar el agente también en desarrollo.
 
 ## Resultado de la verificación local (2026-07-14)
 
