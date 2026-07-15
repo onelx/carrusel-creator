@@ -698,6 +698,136 @@
     }
     .hist-empty .ph-icon { font-size: 2.5rem; opacity: 0.2; }
 
+    /* ══ COPILOTO ══ */
+    .cp-layout { flex: none; display: flex; gap: 20px; height: calc(100vh - 135px); }
+
+    .cp-chat {
+      width: 420px; flex-shrink: 0; display: flex; flex-direction: column;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      height: 100%; min-height: 0;
+    }
+    .cp-messages { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+    .cp-msg {
+      max-width: 88%; padding: 10px 14px; border-radius: 12px;
+      font-size: 0.78rem; line-height: 1.55; white-space: pre-wrap;
+    }
+    .cp-msg.user {
+      align-self: flex-end; background: rgba(245,197,24,0.12);
+      border: 1px solid rgba(245,197,24,0.25); border-bottom-right-radius: 4px;
+    }
+    .cp-msg.bot {
+      align-self: flex-start; background: var(--surface2);
+      border: 1px solid var(--border); border-bottom-left-radius: 4px;
+    }
+    .cp-msg.error { border-color: rgba(239,68,68,0.4); color: #fca5a5; }
+    .cp-msg.typing { color: var(--muted2); }
+    .cp-msg.typing::after { content: '···'; animation: cpBlink 1s infinite; }
+    @keyframes cpBlink { 50% { opacity: 0.3; } }
+
+    .cp-inputbar { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--border); }
+    .cp-inputbar textarea {
+      flex: 1; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-family: inherit;
+      font-size: 0.78rem; padding: 10px 12px; resize: none; outline: none;
+    }
+    .cp-inputbar textarea:focus { border-color: var(--accent); }
+    .cp-send {
+      width: 42px; border-radius: 10px; border: none; background: var(--accent);
+      color: #000; font-size: 1rem; cursor: pointer; flex-shrink: 0;
+    }
+    .cp-send:disabled { opacity: 0.4; cursor: default; }
+
+    /* Skeleton card (dentro del chat) */
+    .cp-skeleton {
+      align-self: stretch; max-width: 100%; background: var(--surface2);
+      border: 1px solid rgba(245,197,24,0.3); border-radius: 12px;
+      padding: 14px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .cp-sk-label {
+      font-size: 0.55rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent);
+    }
+    .cp-sk-concepto { font-size: 0.82rem; font-weight: 700; line-height: 1.4; }
+    .cp-sk-narrativa { font-size: 0.68rem; color: var(--muted2); line-height: 1.5; }
+    .cp-sk-interp { display: flex; flex-wrap: wrap; gap: 5px; }
+    .cp-sk-tag {
+      font-size: 0.6rem; background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border); padding: 3px 8px;
+      border-radius: 12px; color: var(--muted2);
+    }
+    .cp-sk-tag b { color: var(--text); font-weight: 600; }
+    .cp-sk-slides { display: flex; flex-direction: column; gap: 4px; }
+    .cp-sk-slide { font-size: 0.68rem; display: flex; gap: 7px; line-height: 1.45; }
+    .cp-sk-slide .n { color: var(--accent); font-weight: 700; flex-shrink: 0; }
+    .cp-sk-slide .rol {
+      color: var(--muted); text-transform: uppercase; font-size: 0.53rem;
+      padding-top: 2px; flex-shrink: 0; letter-spacing: 0.06em; width: 62px;
+    }
+    .cp-portadas { display: flex; flex-direction: column; gap: 6px; }
+    .cp-portada-opt {
+      text-align: left; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 9px 12px; cursor: pointer;
+      font-family: inherit; color: var(--text); transition: all 0.15s; width: 100%;
+    }
+    .cp-portada-opt:hover:not(:disabled) { border-color: var(--muted2); }
+    .cp-portada-opt.selected { border-color: var(--accent); background: rgba(245,197,24,0.08); }
+    .cp-portada-opt:disabled { opacity: 0.5; cursor: default; }
+    .cp-portada-opt .po-titulo { font-size: 0.78rem; font-weight: 700; }
+    .cp-portada-opt .po-sub { font-size: 0.65rem; color: var(--muted2); margin-top: 2px; }
+    .cp-portada-opt .po-enfoque {
+      font-size: 0.53rem; color: var(--accent); text-transform: uppercase;
+      letter-spacing: 0.08em; margin-top: 4px;
+    }
+    .cp-approve {
+      background: var(--accent); color: #000; border: none; border-radius: 10px;
+      padding: 10px; font-weight: 700; font-size: 0.75rem; cursor: pointer;
+      font-family: inherit; transition: filter 0.15s;
+    }
+    .cp-approve:hover:not(:disabled) { filter: brightness(1.1); }
+    .cp-approve:disabled { opacity: 0.4; cursor: default; }
+
+    /* Preview (columna derecha) */
+    .cp-preview { flex: 1; overflow-y: auto; min-width: 0; height: 100%; min-height: 0; }
+    .cp-placeholder {
+      height: 100%; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 10px; color: var(--muted); font-size: 0.8rem;
+      border: 1px dashed var(--border); border-radius: 14px;
+    }
+    .cp-placeholder .big { font-size: 2rem; }
+
+    /* Caption card */
+    .cp-caption-card {
+      margin-top: 20px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 14px; padding: 16px;
+    }
+    .cp-caption-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .cp-caption-title { font-size: 0.72rem; font-weight: 700; }
+    .cp-caption-text { font-size: 0.75rem; line-height: 1.6; white-space: pre-wrap; }
+    .cp-hashtags { margin-top: 10px; font-size: 0.7rem; color: var(--accent); line-height: 1.6; word-break: break-word; }
+
+    /* Chips de motivo del rating */
+    .cp-reasons {
+      display: none; flex-direction: column; gap: 10px; margin-top: 12px;
+      padding: 14px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 12px;
+    }
+    .cp-reasons.show { display: flex; }
+    .cp-reasons-label { font-size: 0.65rem; color: var(--muted2); }
+    .cp-reason-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .cp-reason-chip {
+      background: var(--surface); border: 1px solid var(--border); color: var(--muted2);
+      border-radius: 16px; padding: 5px 11px; font-size: 0.65rem;
+      cursor: pointer; font-family: inherit; transition: all 0.15s;
+    }
+    .cp-reason-chip.on { border-color: var(--accent); color: var(--accent); background: rgba(245,197,24,0.08); }
+    .cp-reason-note {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); font-family: inherit; font-size: 0.7rem;
+      padding: 8px 10px; resize: none; outline: none;
+    }
+    .cp-reason-note:focus { border-color: var(--accent); }
+
     /* Scrollbar */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
@@ -726,6 +856,12 @@
       <button class="nav-item" id="nav-ia" onclick="switchView('ia')">
         <span class="nav-icon">✨</span>
         <span class="nav-label">Con IA</span>
+      </button>
+
+      <button class="nav-item" id="nav-copilot" onclick="switchView('copilot')">
+        <span class="nav-icon">🤖</span>
+        <span class="nav-label">Copiloto</span>
+        <span class="nav-badge">Nuevo</span>
       </button>
 
       <button class="nav-item" id="nav-historial" onclick="switchView('historial')">
@@ -1159,6 +1295,128 @@
 
     </div><!-- /view-ia -->
 
+    <!-- ══ VIEW: COPILOTO ══ -->
+    <div class="view" id="view-copilot">
+      <div class="cp-layout">
+
+        <!-- Chat -->
+        <div class="cp-chat">
+          <div class="cp-messages" id="cp-messages"></div>
+          <div class="cp-inputbar">
+            <textarea id="cp-input" rows="2" placeholder="Contale tu idea al copiloto..."></textarea>
+            <button class="cp-send" id="cp-send" onclick="cpSend()">➤</button>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="cp-preview">
+
+          <div class="cp-placeholder" id="cp-placeholder">
+            <div class="big">🎠</div>
+            <div>Tu carrusel va a aparecer acá</div>
+            <p style="font-size:0.65rem;color:var(--muted);max-width:260px;text-align:center;line-height:1.6">
+              Contale tu idea al copiloto, ajustá el esqueleto que te proponga y aprobalo para generar el carrusel
+            </p>
+          </div>
+
+          <div id="cp-result" style="display:none">
+
+            <div class="result-header">
+              <div>
+                <div class="result-title" id="cp-result-title">Carrusel</div>
+                <div class="result-subtitle" id="cp-result-subtitle"></div>
+              </div>
+              <div class="result-actions">
+                <div class="save-status" id="cp-save-status"></div>
+                <div class="render-mode-switch">
+                  <button class="rm-opt active" id="cp-rm-fondo"     onclick="cpSwitchRenderMode('fondo')">🖼 Fondo</button>
+                  <button class="rm-opt"        id="cp-rm-editorial" onclick="cpSwitchRenderMode('editorial')">📰 Editorial</button>
+                </div>
+                <button class="btn-sm btn-outline" onclick="cpRestart()">↩ Nuevo</button>
+                <button class="btn-sm btn-filled"  onclick="cpDownloadAll()" id="cp-btn-dl-all">⬇ Descargar todos</button>
+              </div>
+            </div>
+
+            <div class="size-toolbar">
+              <div class="size-group">
+                <span class="size-label">Título</span>
+                <input type="number" class="size-input" data-field="titulo" value="82" min="20" max="160" step="1" oninput="setTextSize('titulo', this.value)">
+                <span class="size-unit">px</span>
+              </div>
+              <div class="size-group">
+                <span class="size-label">Subtítulo</span>
+                <input type="number" class="size-input" data-field="sub" value="36" min="12" max="100" step="1" oninput="setTextSize('sub', this.value)">
+                <span class="size-unit">px</span>
+              </div>
+              <div class="size-group">
+                <span class="size-label">Cuerpo</span>
+                <input type="number" class="size-input" data-field="body" value="28" min="10" max="100" step="1" oninput="setTextSize('body', this.value)">
+                <span class="size-unit">px</span>
+              </div>
+            </div>
+
+            <div class="carousel-stage">
+              <div class="slide-wrapper">
+                <div class="slide-inner" id="cp-slide-inner"></div>
+              </div>
+              <div class="carousel-nav">
+                <button class="nav-btn" id="cp-btn-prev" onclick="cpNavigate(-1)">←</button>
+                <div class="dots" id="cp-dots"></div>
+                <div class="nav-info" id="cp-nav-info">1 / 1</div>
+                <button class="nav-btn" id="cp-btn-next" onclick="cpNavigate(1)">→</button>
+              </div>
+              <div class="thumbnails" id="cp-thumbnails"></div>
+              <div class="slide-download">
+                <button class="btn-sm btn-outline" onclick="cpDownloadCurrent()" id="cp-btn-dl-slide">⬇ Slide actual</button>
+                <span style="font-size:0.62rem;color:var(--muted2)" id="cp-dl-status"></span>
+              </div>
+            </div>
+
+            <!-- Caption para Instagram -->
+            <div class="cp-caption-card" id="cp-caption-card" style="display:none">
+              <div class="cp-caption-head">
+                <span class="cp-caption-title">📝 Caption para Instagram</span>
+                <button class="btn-sm btn-outline" onclick="cpCopyCaption()" id="cp-copy-btn">📋 Copiar</button>
+              </div>
+              <div class="cp-caption-text" id="cp-caption-text"></div>
+              <div class="cp-hashtags" id="cp-hashtags"></div>
+            </div>
+
+            <!-- Rating -->
+            <div class="stars-section" id="cp-stars-section" style="display:none">
+              <span class="stars-label">Tu valoración</span>
+              <div class="stars" id="cp-stars">
+                <button class="star-btn" data-val="1" onclick="rateCP(1)">⭐</button>
+                <button class="star-btn" data-val="2" onclick="rateCP(2)">⭐</button>
+                <button class="star-btn" data-val="3" onclick="rateCP(3)">⭐</button>
+                <button class="star-btn" data-val="4" onclick="rateCP(4)">⭐</button>
+                <button class="star-btn" data-val="5" onclick="rateCP(5)">⭐</button>
+              </div>
+              <span class="stars-status" id="cp-stars-status"></span>
+            </div>
+
+            <!-- Chips de motivo (aparecen con rating < 5) -->
+            <div class="cp-reasons" id="cp-reasons">
+              <span class="cp-reasons-label">¿Qué falló? Esto entrena al copiloto para la próxima:</span>
+              <div class="cp-reason-chips">
+                <button class="cp-reason-chip" data-key="texto"          onclick="cpToggleReason(this)">📝 El texto no era mi tono</button>
+                <button class="cp-reason-chip" data-key="imagenes"       onclick="cpToggleReason(this)">🖼 Las imágenes no encajaban</button>
+                <button class="cp-reason-chip" data-key="estructura"     onclick="cpToggleReason(this)">🧩 La estructura falló</button>
+                <button class="cp-reason-chip" data-key="interpretacion" onclick="cpToggleReason(this)">🎯 No entendió lo que pedí</button>
+              </div>
+              <textarea class="cp-reason-note" id="cp-reason-note" rows="2" placeholder="¿Qué hubieras querido? (opcional)"></textarea>
+              <div style="display:flex;align-items:center;gap:10px">
+                <button class="btn-sm btn-outline" onclick="cpSendReasons()">Guardar feedback</button>
+                <span style="font-size:0.62rem;color:var(--muted2)" id="cp-reasons-status"></span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /view-copilot -->
+
     <!-- ══ VIEW: HISTORIAL ══ -->
     <div class="view" id="view-historial">
 
@@ -1252,12 +1510,14 @@ function setTextSize(field, value) {
   document.querySelectorAll(`.size-input[data-field="${field}"]`).forEach(inp => { inp.value = n })
   if (carouselData) goTo(currentSlide)
   if (iaCarouselData) iaGoTo(iaCurrentSlide)
+  if (cpCarouselData) cpGoTo(cpCurrentSlide)
 }
 
 // ── Sidebar navigation ────────────────────────────────────────
 const views = {
   fotos:    { title: 'Carrusel desde fotos', desc: '— Claude elige la imagen perfecta para cada slide' },
   ia:       { title: 'Carrusel con IA',       desc: '— Gemini genera imágenes para cada idea' },
+  copilot:  { title: 'Copiloto creativo',     desc: '— Conversá, ajustá el esqueleto y generá el carrusel' },
   historial:{ title: 'Historial',             desc: '— Todos tus carruseles guardados' }
 }
 
@@ -2092,6 +2352,392 @@ async function rateIA(val) {
 }
 
 // ══════════════════════════════════════════════════════════════
+// ── COPILOTO ──────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+let cpMessages       = []      // historial en formato Anthropic (se manda entero al server)
+let cpPendingToolUseId = null  // tool_use que espera su tool_result en el próximo turno
+let cpCarouselData   = null
+let cpSlideImages    = []
+let cpCurrentSlide   = 0
+let cpRenderMode     = 'fondo'
+let cpCarouselId     = null
+let cpBrief          = null
+let cpCaption        = null
+let cpHashtags       = []
+let cpBusy           = false
+let cpUserRating     = 0
+let cpCurrentSkeleton = null
+let cpSelectedPortada = null
+
+function cpEsc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+}
+
+function cpAddBubble(cls, html) {
+  const box = document.getElementById('cp-messages')
+  const el = document.createElement('div')
+  el.className = `cp-msg ${cls}`
+  el.innerHTML = html
+  box.appendChild(el)
+  box.scrollTop = box.scrollHeight
+  return el
+}
+
+function cpWelcome() {
+  cpAddBubble('bot', '¡Hola! Soy tu copiloto creativo 🤖\n\nContame tu idea para el carrusel: de qué querés hablar, para quién es y qué buscás lograr. Con eso te propongo una estructura y la ajustamos juntos antes de generar nada.')
+}
+
+// El tool_result pendiente viaja junto con el próximo mensaje del usuario
+function cpPushUser(text, toolResultNote) {
+  const content = []
+  if (cpPendingToolUseId) {
+    content.push({
+      type: 'tool_result',
+      tool_use_id: cpPendingToolUseId,
+      content: toolResultNote || 'Mostrado al usuario en la interfaz.'
+    })
+    cpPendingToolUseId = null
+  }
+  content.push({ type: 'text', text })
+  cpMessages.push({ role: 'user', content })
+}
+
+async function cpSend() {
+  const input = document.getElementById('cp-input')
+  const text = input.value.trim()
+  if (!text || cpBusy) return
+  input.value = ''
+  if (!cpBrief) cpBrief = text
+  cpAddBubble('user', cpEsc(text))
+  cpPushUser(text)
+  await cpTurn()
+}
+
+document.getElementById('cp-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); cpSend() }
+})
+
+async function cpTurn() {
+  cpBusy = true
+  document.getElementById('cp-send').disabled = true
+  const typing = cpAddBubble('bot typing', 'Pensando')
+  try {
+    const res = await fetch(`${API}/api/copilot`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: cpMessages })
+    })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok || !data.ok) throw new Error(data.error || `Error ${res.status}`)
+    typing.remove()
+
+    cpMessages.push({ role: 'assistant', content: data.assistantContent })
+
+    if (data.reply) cpAddBubble('bot', cpEsc(data.reply))
+
+    if (data.tool) {
+      cpPendingToolUseId = data.tool.id
+      if (data.tool.name === 'proponer_esqueleto') {
+        cpRenderSkeleton(data.tool.input)
+      } else if (data.tool.name === 'crear_carrusel') {
+        await cpExecuteCarousel(data.tool.input)
+      }
+    }
+  } catch (err) {
+    typing.remove()
+    cpAddBubble('bot error', cpEsc(err.message || 'Error inesperado'))
+  }
+  cpBusy = false
+  document.getElementById('cp-send').disabled = false
+}
+
+// ── Esqueleto (tarjeta en el chat) ────────────────────────────
+function cpRenderSkeleton(sk) {
+  cpCurrentSkeleton = sk
+  cpSelectedPortada = null
+
+  // Deshabilitar interacción de esqueletos anteriores
+  document.querySelectorAll('.cp-skeleton button').forEach(b => b.disabled = true)
+
+  const interp = sk.interpretacion || {}
+  const tags = [
+    ['Tono', interp.tono], ['Audiencia', interp.audiencia],
+    ['Estilo', interp.estilo_visual], ['CTA', interp.cta_objetivo]
+  ].filter(([, v]) => v)
+    .map(([k, v]) => `<span class="cp-sk-tag">${k}: <b>${cpEsc(v)}</b></span>`).join('')
+
+  const paleta = (sk.paleta || []).map(c =>
+    `<span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:${cpEsc(c)};border:1px solid var(--border);vertical-align:middle"></span>`
+  ).join(' ')
+
+  const slides = (sk.slides || []).map(s =>
+    `<div class="cp-sk-slide"><span class="n">${s.numero}</span><span class="rol">${cpEsc(s.rol)}</span><span>${cpEsc(s.idea)}</span></div>`
+  ).join('')
+
+  const portadas = (sk.portada_opciones || []).map((p, i) => `
+    <button class="cp-portada-opt" onclick="cpPickPortada(this, ${i})">
+      <div class="po-titulo">${cpEsc(p.titulo)}</div>
+      <div class="po-sub">${cpEsc(p.subtitulo)}</div>
+      <div class="po-enfoque">${cpEsc(p.enfoque)}</div>
+    </button>`).join('')
+
+  const box = document.getElementById('cp-messages')
+  const el = document.createElement('div')
+  el.className = 'cp-skeleton'
+  el.innerHTML = `
+    <span class="cp-sk-label">Esqueleto propuesto · ${sk.slide_count} slides</span>
+    <div class="cp-sk-concepto">${cpEsc(sk.concepto)}</div>
+    <div class="cp-sk-narrativa">${cpEsc(sk.narrativa)}</div>
+    <div class="cp-sk-interp">${tags}<span class="cp-sk-tag">Paleta: ${paleta}</span></div>
+    <div class="cp-sk-slides">${slides}</div>
+    <span class="cp-sk-label">Elegí tu portada</span>
+    <div class="cp-portadas">${portadas}</div>
+    <button class="cp-approve" onclick="cpApprove(this)">✓ Aprobar y generar carrusel</button>
+    <div style="font-size:0.6rem;color:var(--muted2);text-align:center">o escribí abajo qué cambiarías</div>`
+  box.appendChild(el)
+  box.scrollTop = box.scrollHeight
+}
+
+function cpPickPortada(btn, i) {
+  cpSelectedPortada = i
+  btn.closest('.cp-portadas').querySelectorAll('.cp-portada-opt').forEach(b => b.classList.remove('selected'))
+  btn.classList.add('selected')
+}
+
+async function cpApprove(btn) {
+  if (cpBusy) return
+  btn.closest('.cp-skeleton').querySelectorAll('button').forEach(b => b.disabled = true)
+
+  let msg
+  if (cpSelectedPortada !== null && cpCurrentSkeleton?.portada_opciones?.[cpSelectedPortada]) {
+    const p = cpCurrentSkeleton.portada_opciones[cpSelectedPortada]
+    msg = `Apruebo el esqueleto. Para la portada elegí la opción ${cpSelectedPortada + 1}: «${p.titulo} — ${p.subtitulo}». Generá el carrusel completo.`
+  } else {
+    msg = 'Apruebo el esqueleto. Elegí vos la mejor opción de portada. Generá el carrusel completo.'
+  }
+  cpAddBubble('user', cpEsc(msg))
+  cpPushUser(msg, 'Esqueleto mostrado al usuario. Lo aprobó.')
+  await cpTurn()
+}
+
+// ── Ejecución: imágenes + render + guardado ───────────────────
+async function cpExecuteCarousel(input) {
+  cpCarouselData = { tema: input.tema, theme: input.theme, slides: input.slides }
+  cpCaption = input.caption || ''
+  cpHashtags = input.hashtags || []
+
+  const total = cpCarouselData.slides.length
+  let done = 0
+  const progress = cpAddBubble('bot', `🖼 Gemini generando imágenes… 0/${total}`)
+
+  const imagePromises = cpCarouselData.slides.map(slide =>
+    fetch(`${API}/api/generate-slide-image`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: slide.image_prompt })
+    })
+    .then(r => r.json())
+    .then(d => {
+      done++
+      progress.textContent = `🖼 Gemini generando imágenes… ${done}/${total}`
+      return d.image ? `data:${d.mimeType || 'image/png'};base64,${d.image}` : null
+    })
+    .catch(() => null)
+  )
+  cpSlideImages = await Promise.all(imagePromises)
+
+  const failed = cpSlideImages.filter(x => !x).length
+  progress.textContent = failed
+    ? `✓ Carrusel listo (${failed} imagen${failed > 1 ? 'es' : ''} falló — se usa el color de fondo). Lo tenés a la derecha →`
+    : '✓ ¡Carrusel listo! Lo tenés a la derecha → Calificalo con estrellas cuando lo veas.'
+
+  cpCurrentSlide = 0
+  cpRenderResult()
+  saveCarouselToSupabase('copiloto', document.getElementById('cp-save-status'))
+}
+
+function cpFullCaption() {
+  if (!cpCaption && !cpHashtags.length) return null
+  const tags = cpHashtags.map(h => '#' + String(h).replace(/^#/, '')).join(' ')
+  return [cpCaption, tags].filter(Boolean).join('\n\n')
+}
+
+// ── Render ────────────────────────────────────────────────────
+function cpRenderResult() {
+  const c = cpCarouselData
+  document.getElementById('cp-placeholder').style.display = 'none'
+  document.getElementById('cp-result').style.display = 'block'
+  document.getElementById('cp-result-title').textContent = c.tema || 'Carrusel'
+  document.getElementById('cp-result-subtitle').textContent = `${c.slides.length} slides · 1080×1350px · Copiloto`
+
+  document.getElementById('cp-dots').innerHTML = c.slides.map((_, i) =>
+    `<div class="dot ${i===0?'active':''}" onclick="cpGoTo(${i})"></div>`).join('')
+
+  document.getElementById('cp-thumbnails').innerHTML = c.slides.map((slide, i) => {
+    const imgUrl = cpSlideImages[i]
+    return `<div class="thumb-nav ${i===0?'active':''}" onclick="cpGoTo(${i})">
+      ${imgUrl ? `<img src="${imgUrl}" />` : '<div style="background:var(--surface2);width:100%;height:100%"></div>'}
+      <div class="tn-num">${i+1}</div>
+    </div>`
+  }).join('')
+
+  // Caption
+  if (cpCaption || cpHashtags.length) {
+    document.getElementById('cp-caption-card').style.display = 'block'
+    document.getElementById('cp-caption-text').textContent = cpCaption
+    document.getElementById('cp-hashtags').textContent = cpHashtags.map(h => '#' + String(h).replace(/^#/, '')).join(' ')
+  }
+
+  document.getElementById('cp-stars-section').style.display = 'flex'
+  document.getElementById('cp-rm-fondo').classList.toggle('active', cpRenderMode === 'fondo')
+  document.getElementById('cp-rm-editorial').classList.toggle('active', cpRenderMode === 'editorial')
+
+  cpGoTo(0)
+}
+
+function cpGoTo(i) {
+  cpCurrentSlide = i
+  const c = cpCarouselData
+  document.getElementById('cp-slide-inner').innerHTML =
+    cpRenderMode === 'editorial'
+      ? buildSlideEditorial(c.slides[i], c.theme, i+1, c.slides.length, cpSlideImages[i])
+      : buildSlideIAFondo(c.slides[i], c.theme, i+1, c.slides.length, cpSlideImages[i])
+  document.getElementById('cp-nav-info').textContent = `${i+1} / ${c.slides.length}`
+  document.getElementById('cp-btn-prev').disabled = i === 0
+  document.getElementById('cp-btn-next').disabled = i === c.slides.length - 1
+  document.querySelectorAll('#cp-dots .dot').forEach((d, di) => d.className = 'dot'+(di===i?' active':''))
+  document.querySelectorAll('#cp-thumbnails .thumb-nav').forEach((t, ti) => t.className = 'thumb-nav'+(ti===i?' active':''))
+}
+
+function cpNavigate(dir) {
+  const n = cpCurrentSlide + dir
+  if (cpCarouselData && n >= 0 && n < cpCarouselData.slides.length) cpGoTo(n)
+}
+
+function cpSwitchRenderMode(mode) {
+  cpRenderMode = mode
+  document.getElementById('cp-rm-fondo').classList.toggle('active', mode === 'fondo')
+  document.getElementById('cp-rm-editorial').classList.toggle('active', mode === 'editorial')
+  cpGoTo(cpCurrentSlide)
+}
+
+function cpRestart() {
+  cpMessages = []; cpPendingToolUseId = null
+  cpCarouselData = null; cpSlideImages = []; cpCurrentSlide = 0
+  cpCarouselId = null; cpBrief = null; cpCaption = null; cpHashtags = []
+  cpUserRating = 0; cpCurrentSkeleton = null; cpSelectedPortada = null
+  document.getElementById('cp-messages').innerHTML = ''
+  document.getElementById('cp-result').style.display = 'none'
+  document.getElementById('cp-placeholder').style.display = 'flex'
+  document.getElementById('cp-reasons').classList.remove('show')
+  document.getElementById('cp-reason-note').value = ''
+  document.querySelectorAll('#cp-stars .star-btn').forEach(b => b.classList.remove('lit'))
+  document.querySelectorAll('.cp-reason-chip').forEach(b => b.classList.remove('on'))
+  cpWelcome()
+}
+
+// ── Descargas ─────────────────────────────────────────────────
+async function cpDownloadCurrent() {
+  const btn = document.getElementById('cp-btn-dl-slide')
+  const status = document.getElementById('cp-dl-status')
+  btn.disabled = true; status.textContent = 'Generando PNG...'
+  try { await cpDownloadSlide(cpCurrentSlide); status.textContent = '✓ Descargado' }
+  catch(e) { status.textContent = 'Error' }
+  btn.disabled = false
+  setTimeout(() => status.textContent = '', 2000)
+}
+
+async function cpDownloadAll() {
+  const btn = document.getElementById('cp-btn-dl-all')
+  btn.disabled = true
+  for (let i = 0; i < cpCarouselData.slides.length; i++) {
+    btn.textContent = `Descargando ${i+1}/${cpCarouselData.slides.length}...`
+    await cpDownloadSlide(i)
+    await new Promise(r => setTimeout(r, 400))
+  }
+  btn.disabled = false; btn.textContent = '⬇ Descargar todos'
+}
+
+async function cpDownloadSlide(index) {
+  const c = cpCarouselData
+  const container = document.createElement('div')
+  container.style.cssText = 'position:fixed;left:-9999px;top:0;width:1080px;height:1350px;overflow:hidden;z-index:-1'
+  container.innerHTML = cpRenderMode === 'editorial'
+    ? buildSlideEditorial(c.slides[index], c.theme, index+1, c.slides.length, cpSlideImages[index])
+    : buildSlideIAFondo(c.slides[index], c.theme, index+1, c.slides.length, cpSlideImages[index])
+  document.body.appendChild(container)
+  await new Promise(r => setTimeout(r, 300))
+  const canvas = await html2canvas(container, {
+    width:1080, height:1350, scale:1, useCORS:true, allowTaint:true,
+    backgroundColor: c.theme.bg_fallback || '#0d0d0d'
+  })
+  document.body.removeChild(container)
+  const a = document.createElement('a')
+  a.download = `slide-copiloto-${String(index+1).padStart(2,'0')}.png`
+  a.href = canvas.toDataURL('image/png'); a.click()
+}
+
+// ── Caption ───────────────────────────────────────────────────
+async function cpCopyCaption() {
+  const btn = document.getElementById('cp-copy-btn')
+  try {
+    await navigator.clipboard.writeText(cpFullCaption() || '')
+    btn.textContent = '✓ Copiado'
+  } catch { btn.textContent = 'Error' }
+  setTimeout(() => btn.textContent = '📋 Copiar', 2000)
+}
+
+// ── Rating + chips de motivo ──────────────────────────────────
+async function rateCP(val) {
+  cpUserRating = val
+  document.querySelectorAll('#cp-stars .star-btn').forEach(btn => {
+    btn.classList.toggle('lit', parseInt(btn.dataset.val) <= val)
+  })
+  document.getElementById('cp-reasons').classList.toggle('show', val < 5)
+
+  const status = document.getElementById('cp-stars-status')
+  if (!cpCarouselId) { status.textContent = '(guardando carrusel primero...)'; return }
+
+  try {
+    await fetch(`${API}/api/rate-carousel`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: cpCarouselId, rating: val })
+    })
+    const labels = ['', 'Mejorable', 'Regular', 'Bueno', 'Muy bueno', '¡Excelente!']
+    status.textContent = `✓ ${labels[val]}`
+  } catch { status.textContent = 'Error al guardar' }
+}
+
+function cpToggleReason(btn) {
+  btn.classList.toggle('on')
+}
+
+async function cpSendReasons() {
+  const status = document.getElementById('cp-reasons-status')
+  if (!cpCarouselId || !cpUserRating) { status.textContent = 'Primero calificá con estrellas'; return }
+
+  const motivos = [...document.querySelectorAll('.cp-reason-chip.on')].map(b => b.dataset.key)
+  const nota = document.getElementById('cp-reason-note').value.trim()
+
+  try {
+    await fetch(`${API}/api/rate-carousel`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: cpCarouselId,
+        rating: cpUserRating,
+        ratingReasons: { motivos, nota: nota || null }
+      })
+    })
+    status.textContent = '✓ Feedback guardado — el copiloto lo usa la próxima'
+  } catch { status.textContent = 'Error al guardar' }
+}
+
+// Mensaje de bienvenida inicial
+cpWelcome()
+
+// ══════════════════════════════════════════════════════════════
 // ── GUARDAR EN SUPABASE ───────────────────────────────────────
 // ══════════════════════════════════════════════════════════════
 
@@ -2125,7 +2771,7 @@ async function renderSlideToJpeg(index, mode, width = 540, height = 675) {
 }
 
 async function saveCarouselToSupabase(mode, statusEl) {
-  const c = mode === 'ia' ? iaCarouselData : carouselData
+  const c = mode === 'ia' ? iaCarouselData : mode === 'copiloto' ? cpCarouselData : carouselData
   if (!c) return
 
   const setStatus = (cls, text) => {
@@ -2144,11 +2790,14 @@ async function saveCarouselToSupabase(mode, statusEl) {
       body: JSON.stringify({
         title: c.tema || 'Sin título',
         mode,
-        renderMode: mode === 'ia' ? iaRenderMode : null,
+        renderMode: mode === 'ia' ? iaRenderMode : mode === 'copiloto' ? cpRenderMode : null,
         theme: c.theme,
         slides: c.slides,
         agent1Output: mode === 'ia' ? iaAgent1Output : null,
-        agent2Output: mode === 'ia' ? iaAgent2Output : null
+        agent2Output: mode === 'ia' ? iaAgent2Output : null,
+        brief: mode === 'copiloto' ? cpBrief : null,
+        conversation: mode === 'copiloto' ? cpMessages : null,
+        caption: mode === 'copiloto' ? cpFullCaption() : null
       })
     })
     if (!saveRes.ok) throw new Error(`HTTP ${saveRes.status}`)
@@ -2157,6 +2806,7 @@ async function saveCarouselToSupabase(mode, statusEl) {
 
     const carouselId = saveData.id
     if (mode === 'ia') iaCarouselId = carouselId
+    if (mode === 'copiloto') cpCarouselId = carouselId
 
     // 2. Subir cada slide (directo para IA, html2canvas para Fotos)
     const slideUrls = []
@@ -2164,9 +2814,9 @@ async function saveCarouselToSupabase(mode, statusEl) {
       setStatus('saving', `⏳ Subiendo slide ${i + 1}/${c.slides.length}...`)
 
       let imageB64, isPng
-      if (mode === 'ia') {
+      if (mode === 'ia' || mode === 'copiloto') {
         // Usar la imagen PNG de Gemini directamente (sin html2canvas)
-        const dataUrl = iaSlideImages[i]
+        const dataUrl = mode === 'ia' ? iaSlideImages[i] : cpSlideImages[i]
         imageB64 = dataUrl ? dataUrl.split(',')[1] : null
         isPng = true
       } else {
@@ -2250,8 +2900,8 @@ function renderHistGrid(carousels) {
   emptyEl.style.display = 'none'
   cardsEl.innerHTML = carousels.map(c => {
     const date = new Date(c.created_at).toLocaleDateString('es-AR', { day:'2-digit', month:'short', year:'numeric' })
-    const modeLabel = c.mode === 'ia' ? '✨ Con IA' : '📷 Desde fotos'
-    const modeClass = c.mode === 'ia' ? 'cc-badge-ia' : 'cc-badge-fotos'
+    const modeLabel = c.mode === 'ia' ? '✨ Con IA' : c.mode === 'copiloto' ? '🤖 Copiloto' : '📷 Desde fotos'
+    const modeClass = c.mode === 'fotos' ? 'cc-badge-fotos' : 'cc-badge-ia'
     return `
       <div class="carousel-card" onclick="openCarousel('${c.id}')">
         <div class="cc-thumb" ${c.thumbnail_url ? `style="background-image:url('${c.thumbnail_url}')"` : ''}>
@@ -2302,7 +2952,7 @@ function renderViewer() {
   document.getElementById('hv-title').textContent = carousel.title
 
   const date = new Date(carousel.created_at).toLocaleDateString('es-AR', { day:'2-digit', month:'short', year:'numeric' })
-  const modeLabel = carousel.mode === 'ia' ? 'Con IA' : 'Desde fotos'
+  const modeLabel = carousel.mode === 'ia' ? 'Con IA' : carousel.mode === 'copiloto' ? 'Copiloto' : 'Desde fotos'
   const renderLabel = carousel.render_mode ? ` · ${carousel.render_mode}` : ''
   document.getElementById('hv-subtitle').textContent = `${carousel.slide_count} slides · ${modeLabel}${renderLabel} · ${date}`
 

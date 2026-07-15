@@ -5,6 +5,7 @@
     { "src": "*.html",  "use": "@vercel/static" }
   ],
 "routes": [
+    { "src": "/api/copilot",               "dest": "/api/copilot.js" },
     { "src": "/api/generate-carousel",     "dest": "/api/generate-carousel.js" },
     { "src": "/api/generate-carousel-ia",  "dest": "/api/generate-carousel-ia.js" },
     { "src": "/api/generate-slide-image",  "dest": "/api/generate-slide-image.js" },

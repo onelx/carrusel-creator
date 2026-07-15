@@ -7,7 +7,7 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end()
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
-  const { title, mode, renderMode, theme, slides, agent1Output, agent2Output } = req.body
+  const { title, mode, renderMode, theme, slides, agent1Output, agent2Output, brief, conversation, caption } = req.body
   if (!title || !mode || !slides) {
     return res.status(400).json({ error: 'Faltan campos requeridos' })
   }
@@ -26,6 +26,9 @@ module.exports = async function handler(req, res) {
         slides,
         agent1_output: agent1Output || null,
         agent2_output: agent2Output || null,
+        brief: brief || null,
+        conversation: conversation || null,
+        caption: caption || null,
         thumbnail_url: null,
         slide_urls: null
       })
